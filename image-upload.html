@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传推荐 - 穿搭推荐</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #9370DB;
+            --secondary-color: #98FB98;
+            --accent-color: #FFCCCB;
+            --text-color: #333333;
+            --light-gray: #f5f5f5;
+            --light-purple: #F5F0FF;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --success-color: #4CAF50;
+            --processing-color: #2196F3;
+            --error-color: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 0.7rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .user-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-actions .login-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 上传区域 */
+        .upload-container {
+            background-color: var(--light-purple);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .upload-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-description {
+            color: var(--dark-gray);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .upload-area {
+            position: relative;
+            max-width: 800px;
+            height: 300px;
+            margin: 0 auto 1.5rem;
+            background-color: white;
+            border: 2px dashed var(--medium-gray);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(147, 112, 219, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .upload-area.has-image {
+            border-style: solid;
+            border-color: var(--primary-color);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background-color: #8067c3;
+            transform: translateY(-2px);
+        }
+        
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .upload-actions {
+            display: none;
+            margin-top: 1.5rem;
+        }
+        
+        .action-btn {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .action-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .action-btn.primary:hover {
+            background-color: #8067c3;
+            border-color: #8067c3;
+        }
+        
+        .upload-tips {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .upload-tip {
+            display: flex;
+            align-items: center;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .upload-tip i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        /* 加载动画 */
+        .loader-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-purple);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-text {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 1rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #a088e4);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            text-align: right;
+        }
+        
+        /* 分析结果区域 */
+        .analysis-results {
+            display: none;
+            margin-top: 3rem;
+        }
+        
+        .analysis-results.show {
+            display: block;
+        }
+        
+        .result-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.6rem;
+            margin-right: 1rem;
+        }
+        
+        .section-header .divider {
+            flex: 1;
+            height: 1px;
+            background-color: var(--medium-gray);
+        }
+
+        /* 识别结果展示 */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .uploaded-image-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .uploaded-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .image-overlay i {
+            color: var(--success-color);
+            margin-right: 0.5rem;
+        }
+        
+        .analysis-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .analysis-card {
+            background-color: var(--light-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            color: var(--primary-color);
+            margin-right: 0.7rem;
+            font-size: 1.4rem;
+        }
+        
+        .style-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+        }
+        
+        .style-tag {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .style-description {
+            color: var(--dark-gray);
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+        
+        .confidence-meter {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .confidence-bar {
+            flex: 1;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        .confidence-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .result-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: 25px;
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .result-action-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .result-action-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .result-action-btn.primary:hover {
+            background-color: #8067c3;
+            border-color: #8067c3;
+        }
+        
+        /* 识别的单品 */
+        .items-container {
+            margin-bottom: 2rem;
+        }
+        
+        .items-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .item-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .item-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .item-card:hover .item-image img {
+            transform: scale(1.05);
+        }
+        
+        .item-details {
+            padding: 1.2rem;
+        }
+        
+        .item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-category {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-price {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .item-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .item-btn {
+            color: var(--dark-gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: color 0.3s ease;
+        }
+        
+        .item-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        /* 相似推荐区域 */
+        .similar-styles-container {
+            margin-bottom: 2rem;
+        }
+        
+        .similar-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 1rem 0;
+            scrollbar-width: none;
+            margin-bottom: 1rem;
+        }
+        
+        .similar-slider::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .similar-card {
+            min-width: 280px;
+            margin-right: 1.5rem;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .similar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .similar-image {
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .similar-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .similar-card:hover .similar-image img {
+            transform: scale(1.05);
+        }
+        
+        .similar-match {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(147, 112, 219, 0.9);
+            color: white;
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .similar-info {
+            padding: 1.2rem;
+        }
+        
+        .similar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+        }
+        
+        .similar-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .similar-tag {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-radius: 20px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.8rem;
+        }
+        
+        .similar-price {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .similar-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .slider-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* 响应式设计 */
+        @media screen and (max-width: 900px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .items-list {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .upload-area {
+                height: 250px;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .upload-area {
+                height: 200px;
+            }
+            
+            .upload-icon {
+                font-size: 2.5rem;
+            }
+            
+            .upload-tips {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: flex-start;
+                padding-left: 1rem;
+            }
+            
+            .similar-card {
+                min-width: 240px;
+            }
+            
+            .similar-image {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="bi bi-stars"></i>穿搭推荐</a>
+        
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="style-recognition.html">穿搭识别</a>
+            <a href="#" class="active">图片上传</a>
+            <a href="#">模特模拟</a>
+            <a href="#">尺码指南</a>
+        </div>
+        
+        <div class="user-actions">
+            <button type="button"><i class="bi bi-bell"></i></button>
+            <button type="button"><i class="bi bi-bookmark"></i></button>
+            <button class="login-btn">登录/注册</button>
+        </div>
+    </nav>
+    
+    <!-- 主内容 -->
+    <div class="container">
+        <div class="page-title">
+            <h1>图片上传穿搭推荐</h1>
+            <p>上传你喜欢的穿搭图片，我们将智能分析并为你推荐相似风格的搭配</p>
+        </div>
+        
+        <!-- 上传区域 -->
+        <section class="upload-container">
+            <h2 class="upload-title">上传穿搭图片</h2>
+            <p class="upload-description">支持JPG、PNG、WEBP格式图片，清晰的正面穿搭照片能够获得更准确的推荐结果</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                <p class="upload-text">拖放图片到这里或点击上传</p>
+                <p class="upload-subtext">支持最大10MB的图片文件</p>
+                <button class="upload-btn">选择图片</button>
+                <input type="file" class="file-input" id="fileInput" accept=".jpg,.jpeg,.png,.webp">
+                <img src="" alt="预览图" class="upload-preview" id="imagePreview">
+            </div>
+            
+            <div class="upload-actions" id="uploadActions">
+                <button class="action-btn" id="resetBtn"><i class="bi bi-arrow-repeat"></i> 重新选择</button>
+                <button class="action-btn" id="rotateBtn"><i class="bi bi-arrow-clockwise"></i> 旋转</button>
+                <button class="action-btn" id="cropBtn"><i class="bi bi-crop"></i> 裁剪</button>
+                <button class="action-btn primary" id="analyzeBtn"><i class="bi bi-search"></i> 开始分析</button>
+            </div>
+            
+            <div class="upload-tips">
+                <div class="upload-tip">
+                    <i class="bi bi-check-circle"></i>
+                    <span>清晰的正面照片</span>
+                </div>
+                <div class="upload-tip">
+                    <i class="bi bi-check-circle"></i>
+                    <span>完整的穿搭效果图</span>
+                </div>
+                <div class="upload-tip">
+                    <i class="bi bi-check-circle"></i>
+                    <span>自然光线下的照片</span>
+                </div>
+                <div class="upload-tip">
+                    <i class="bi bi-check-circle"></i>
+                    <span>避免过度滤镜和处理</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 加载动画 -->
+        <div class="loader-container" id="loaderContainer">
+            <div class="loader"></div>
+            <p class="loader-text">AI正在分析穿搭，请稍候...</p>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text" id="progressText">0%</p>
+            </div>
+        </div>
+        
+        <!-- 分析结果区域 -->
+        <div class="analysis-results" id="analysisResults">
+            <!-- 识别结果 -->
+            <section class="result-section recognition-results">
+                <div class="section-header">
+                    <h2>图片分析结果</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="result-grid">
+                    <div class="uploaded-image-container">
+                        <img src="https://images.unsplash.com/photo-1543076447-215ad9ba6923?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="上传的穿搭图片" class="uploaded-image" id="resultImage">
+                        <div class="image-overlay">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>识别成功</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-content">
+                        <div class="analysis-card">
+                            <h3 class="card-title"><i class="bi bi-stars"></i>风格分析</h3>
+                            <div class="style-tags">
+                                <span class="style-tag">北欧简约</span>
+                                <span class="style-tag">休闲</span>
+                                <span class="style-tag">秋冬</span>
+                                <span class="style-tag">学院风</span>
+                            </div>
+                            <p class="style-description">
+                                这是一套典型的北欧简约风格搭配，以舒适实用为主，融合了学院风的元素。配色以黑白灰为主，简洁大方，非常适合日常通勤和休闲场合穿着。毛衣与牛仔裤的组合既保暖又不失时尚感。
+                            </p>
+                            <div class="confidence-meter">
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 92%;"></div>
+                                </div>
+                                <span class="confidence-value">92% 匹配度</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="result-action-btn primary">
+                                <i class="bi bi-wechat"></i>
+                                <span>一键生成穿搭笔记</span>
+                            </button>
+                            <button class="result-action-btn">
+                                <i class="bi bi-share"></i>
+                                <span>分享结果</span>
+                            </button>
+                            <button class="result-action-btn">
+                                <i class="bi bi-bookmark"></i>
+                                <span>收藏分析</span>
+                            </button>
+                            <button class="result-action-btn">
+                                <i class="bi bi-arrow-repeat"></i>
+                                <span>重新分析</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 识别的单品 -->
+            <section class="result-section identified-items">
+                <div class="section-header">
+                    <h2>识别单品</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="items-container">
+                    <div class="items-list">
+                        <div class="item-card">
+                            <div class="item-image">
+                                <img src="https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="灰色针织毛衣">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-name">灰色纯棉针织毛衣</h4>
+                                <p class="item-category">上衣 / 毛衣</p>
+                                <p class="item-price">¥189.00</p>
+                                <div class="item-actions">
+                                    <button class="item-btn"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-btn"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="item-card">
+                            <div class="item-image">
+                                <img src="https://images.unsplash.com/photo-1582418702059-97ebafb35d09?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="牛仔裤">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-name">高腰直筒牛仔裤</h4>
+                                <p class="item-category">裤装 / 牛仔裤</p>
+                                <p class="item-price">¥239.00</p>
+                                <div class="item-actions">
+                                    <button class="item-btn"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-btn"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="item-card">
+                            <div class="item-image">
+                                <img src="https://images.unsplash.com/photo-1609409612178-8036e8064138?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="厚底靴">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-name">复古厚底马丁靴</h4>
+                                <p class="item-category">鞋履 / 靴子</p>
+                                <p class="item-price">¥329.00</p>
+                                <div class="item-actions">
+                                    <button class="item-btn"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-btn"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="item-card">
+                            <div class="item-image">
+                                <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="贝雷帽">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-name">羊毛贝雷帽</h4>
+                                <p class="item-category">配饰 / 帽子</p>
+                                <p class="item-price">¥89.00</p>
+                                <div class="item-actions">
+                                    <button class="item-btn"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-btn"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 相似推荐 -->
+            <section class="result-section similar-styles">
+                <div class="section-header">
+                    <h2>相似风格推荐</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="similar-styles-container">
+                    <div class="similar-slider" id="similarSlider">
+                        <div class="similar-card">
+                            <div class="similar-image">
+                                <img src="https://images.unsplash.com/photo-1525450824786-227cbef70703?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭1">
+                                <div class="similar-match">95% 匹配</div>
+                            </div>
+                            <div class="similar-info">
+                                <h4 class="similar-title">简约灰黑配色休闲套装</h4>
+                                <div class="similar-tags">
+                                    <span class="similar-tag">简约</span>
+                                    <span class="similar-tag">休闲</span>
+                                    <span class="similar-tag">黑灰</span>
+                                </div>
+                                <p class="similar-price">预估价格: ¥599</p>
+                                <div class="similar-actions">
+                                    <button class="item-btn"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <button class="item-btn"><i class="bi bi-bookmark"></i> 收藏</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-card">
+                            <div class="similar-image">
+                                <img src="https://images.unsplash.com/photo-1495385794356-15371f348c31?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭2">
+                                <div class="similar-match">92% 匹配</div>
+                            </div>
+                            <div class="similar-info">
+                                <h4 class="similar-title">文艺学院风秋季搭配</h4>
+                                <div class="similar-tags">
+                                    <span class="similar-tag">学院风</span>
+                                    <span class="similar-tag">文艺</span>
+                                    <span class="similar-tag">秋季</span>
+                                </div>
+                                <p class="similar-price">预估价格: ¥649</p>
+                                <div class="similar-actions">
+                                    <button class="item-btn"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <button class="item-btn"><i class="bi bi-bookmark"></i> 收藏</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-card">
+                            <div class="similar-image">
+                                <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭3">
+                                <div class="similar-match">88% 匹配</div>
+                            </div>
+                            <div class="similar-info">
+                                <h4 class="similar-title">北欧极简风格组合</h4>
+                                <div class="similar-tags">
+                                    <span class="similar-tag">北欧</span>
+                                    <span class="similar-tag">极简</span>
+                                    <span class="similar-tag">通勤</span>
+                                </div>
+                                <p class="similar-price">预估价格: ¥729</p>
+                                <div class="similar-actions">
+                                    <button class="item-btn"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <button class="item-btn"><i class="bi bi-bookmark"></i> 收藏</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-card">
+                            <div class="similar-image">
+                                <img src="https://images.unsplash.com/photo-1551489186-cf8726f514f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭4">
+                                <div class="similar-match">85% 匹配</div>
+                            </div>
+                            <div class="similar-info">
+                                <h4 class="similar-title">复古慵懒风毛衣搭配</h4>
+                                <div class="similar-tags">
+                                    <span class="similar-tag">复古</span>
+                                    <span class="similar-tag">慵懒</span>
+                                    <span class="similar-tag">毛衣</span>
+                                </div>
+                                <p class="similar-price">预估价格: ¥579</p>
+                                <div class="similar-actions">
+                                    <button class="item-btn"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <button class="item-btn"><i class="bi bi-bookmark"></i> 收藏</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-controls">
+                        <button class="slider-btn" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+                        <button class="slider-btn" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // 上传区域交互
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadActions = document.getElementById('uploadActions');
+        const resetBtn = document.getElementById('resetBtn');
+        const rotateBtn = document.getElementById('rotateBtn');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loaderContainer = document.getElementById('loaderContainer');
+        const analysisResults = document.getElementById('analysisResults');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // 点击上传区域触发文件选择
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // 拖拽文件上传效果
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function() {
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+        
+        // 选择文件后的处理
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect() {
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                
+                // 检查文件类型和大小
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                
+                if (!validTypes.includes(file.type)) {
+                    alert('请上传JPG、PNG或WEBP格式的图片');
+                    return;
+                }
+                
+                if (file.size > maxSize) {
+                    alert('图片大小不能超过10MB');
+                    return;
+                }
+                
+                // 预览图片
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadArea.classList.add('has-image');
+                    uploadActions.style.display = 'block';
+                    
+                    // 隐藏上传区域的其他元素
+                    const uploadIcon = uploadArea.querySelector('.upload-icon');
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    const uploadSubtext = uploadArea.querySelector('.upload-subtext');
+                    const uploadBtn = uploadArea.querySelector('.upload-btn');
+                    
+                    uploadIcon.style.display = 'none';
+                    uploadText.style.display = 'none';
+                    uploadSubtext.style.display = 'none';
+                    uploadBtn.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // 重置按钮
+        resetBtn.addEventListener('click', function() {
+            imagePreview.src = '';
+            imagePreview.style.display = 'none';
+            uploadArea.classList.remove('has-image');
+            uploadActions.style.display = 'none';
+            fileInput.value = '';
+            
+            // 恢复上传区域的原始元素
+            const uploadIcon = uploadArea.querySelector('.upload-icon');
+            const uploadText = uploadArea.querySelector('.upload-text');
+            const uploadSubtext = uploadArea.querySelector('.upload-subtext');
+            const uploadBtn = uploadArea.querySelector('.upload-btn');
+            
+            uploadIcon.style.display = 'block';
+            uploadText.style.display = 'block';
+            uploadSubtext.style.display = 'block';
+            uploadBtn.style.display = 'inline-block';
+            
+            // 旋转角度重置
+            imagePreview.style.transform = 'rotate(0deg)';
+            rotationAngle = 0;
+        });
+        
+        // 旋转按钮
+        let rotationAngle = 0;
+        rotateBtn.addEventListener('click', function() {
+            rotationAngle = (rotationAngle + 90) % 360;
+            imagePreview.style.transform = `rotate(${rotationAngle}deg)`;
+        });
+        
+        // 分析按钮
+        analyzeBtn.addEventListener('click', function() {
+            if (!imagePreview.src) {
+                alert('请先上传图片');
+                return;
+            }
+            
+            // 显示加载动画
+            loaderContainer.style.display = 'flex';
+            
+            // 模拟进度
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // 延迟显示结果，模拟分析完成
+                    setTimeout(() => {
+                        loaderContainer.style.display = 'none';
+                        analysisResults.classList.add('show');
+                        analysisResults.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
+            }, 100);
+        });
+        
+        // 相似推荐滑块控制
+        const similarSlider = document.getElementById('similarSlider');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        prevBtn.addEventListener('click', function() {
+            similarSlider.scrollBy({
+                left: -300,
+                behavior: 'smooth'
+            });
+        });
+        
+        nextBtn.addEventListener('click', function() {
+            similarSlider.scrollBy({
+                left: 300,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模特穿搭模拟 - 穿搭推荐</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #9370DB;
+            --secondary-color: #98FB98;
+            --accent-color: #FFCCCB;
+            --text-color: #333333;
+            --light-gray: #f5f5f5;
+            --light-purple: #F5F0FF;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --success-color: #4CAF50;
+            --processing-color: #2196F3;
+            --error-color: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 0.7rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .user-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-actions .login-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+            gap: 2rem;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+        
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* 模拟区布局 */
+        .simulation-wrapper {
+            display: flex;
+            flex: 1;
+            gap: 2rem;
+            position: relative;
+        }
+        
+        /* 左侧模特选择 */
+        .model-selection {
+            width: 250px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+        
+        .selection-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .selection-title i {
+            color: var(--primary-color);
+        }
+        
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .model-option {
+            position: relative;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .model-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .model-option.active {
+            border: 2px solid var(--primary-color);
+        }
+        
+        .model-option img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .model-option .model-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .model-size-selection {
+            margin-bottom: 1.5rem;
+        }
+        
+        .size-title {
+            font-size: 1rem;
+            margin-bottom: 0.7rem;
+            color: var(--dark-gray);
+        }
+        
+        .size-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .size-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--medium-gray);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        
+        .size-option:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .size-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .body-shape-selection {
+            margin-bottom: 1.5rem;
+        }
+        
+        .shape-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .shape-option {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--medium-gray);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        
+        .shape-option:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .shape-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .background-selection {
+            margin-bottom: 1.5rem;
+        }
+        
+        .background-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        
+        .bg-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .bg-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .bg-option.active {
+            border-color: var(--primary-color);
+        }
+        
+        .bg-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .random-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 25px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .random-btn:hover {
+            background-color: #88eba8;
+            transform: translateY(-2px);
+        }
+        
+        /* 中央模特展示区 */
+        .model-display {
+            flex: 1;
+            background-color: var(--light-purple);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 700px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .display-controls {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+        
+        .display-control-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+        }
+        
+        .display-control-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .model-scene {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .model-figure {
+            height: 90%;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+        
+        .model-image {
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .outfit-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .scene-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.8;
+        }
+        
+        /* 右侧衣物选择区 */
+        .outfit-selection {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .outfit-categories {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+        
+        .categories-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .category-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab:hover {
+            background-color: var(--light-purple);
+            color: var(--primary-color);
+        }
+        
+        .category-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .items-grid::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .items-grid::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+        
+        .items-grid::-webkit-scrollbar-thumb {
+            background: var(--medium-gray);
+            border-radius: 10px;
+        }
+        
+        .clothing-item {
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .clothing-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .clothing-item.active {
+            border: 2px solid var(--primary-color);
+        }
+        
+        .clothing-item img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            background-color: white;
+            padding: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .clothing-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .item-info {
+            padding: 0.7rem;
+            font-size: 0.8rem;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .item-price {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+        
+        /* 当前搭配信息 */
+        .current-outfit {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+        
+        .outfit-items-list {
+            margin-bottom: 1.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .outfit-item-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .outfit-item-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .outfit-item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: white;
+            padding: 0.3rem;
+            object-fit: contain;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .outfit-item-details {
+            flex: 1;
+        }
+        
+        .outfit-item-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+        
+        .outfit-item-category {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        .outfit-item-price {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+        
+        .remove-item {
+            color: var(--dark-gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+        
+        .remove-item:hover {
+            color: var(--error-color);
+        }
+        
+        .outfit-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-top: 1px solid var(--light-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .total-label {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .total-price {
+            font-size: 1.2rem;
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+        
+        .outfit-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .outfit-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .outfit-action-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 3px 10px rgba(147, 112, 219, 0.3);
+        }
+        
+        .outfit-action-btn.primary:hover {
+            background-color: #8067c3;
+            transform: translateY(-2px);
+        }
+        
+        .outfit-action-btn.secondary {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .outfit-action-btn.secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* 响应式设计 */
+        @media screen and (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+            
+            .simulation-wrapper {
+                flex-direction: column;
+            }
+            
+            .model-selection {
+                width: 100%;
+                order: 1;
+            }
+            
+            .model-display {
+                order: 0;
+                min-height: 500px;
+            }
+            
+            .outfit-selection {
+                width: 100%;
+                order: 2;
+            }
+            
+            .models-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .models-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .models-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="bi bi-stars"></i>穿搭推荐</a>
+        
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="style-recognition.html">穿搭识别</a>
+            <a href="image-upload.html">图片上传</a>
+            <a href="#" class="active">模特模拟</a>
+            <a href="#">尺码指南</a>
+        </div>
+        
+        <div class="user-actions">
+            <button type="button"><i class="bi bi-bell"></i></button>
+            <button type="button"><i class="bi bi-bookmark"></i></button>
+            <button class="login-btn">登录/注册</button>
+        </div>
+    </nav>
+    
+    <!-- 页面标题 -->
+    <div class="page-title">
+        <h1>模特穿搭模拟</h1>
+        <p>自由选择心仪单品，搭配在虚拟模特上，打造专属于你的穿搭风格，无需试穿即可预览效果</p>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <div class="simulation-wrapper">
+            <!-- 左侧模特选择 -->
+            <div class="model-selection">
+                <h3 class="selection-title"><i class="bi bi-person-fill"></i>选择模特</h3>
+                <div class="models-grid">
+                    <div class="model-option active">
+                        <img src="https://res.cloudinary.com/demo/image/upload/w_200/woman_standing.png" alt="女性模特1">
+                        <div class="model-info">亚洲女性</div>
+                    </div>
+                    <div class="model-option">
+                        <img src="https://res.cloudinary.com/demo/image/upload/w_200/woman_casual.png" alt="女性模特2">
+                        <div class="model-info">欧美女性</div>
+                    </div>
+                    <div class="model-option">
+                        <img src="https://res.cloudinary.com/demo/image/upload/w_200/man_standing.png" alt="男性模特1">
+                        <div class="model-info">亚洲男性</div>
+                    </div>
+                    <div class="model-option">
+                        <img src="https://res.cloudinary.com/demo/image/upload/w_200/man_casual.png" alt="男性模特2">
+                        <div class="model-info">欧美男性</div>
+                    </div>
+                </div>
+                
+                <div class="model-size-selection">
+                    <h4 class="size-title">选择尺码</h4>
+                    <div class="size-options">
+                        <div class="size-option">XS</div>
+                        <div class="size-option active">S</div>
+                        <div class="size-option">M</div>
+                        <div class="size-option">L</div>
+                        <div class="size-option">XL</div>
+                        <div class="size-option">XXL</div>
+                    </div>
+                </div>
+                
+                <div class="body-shape-selection">
+                    <h4 class="size-title">体型</h4>
+                    <div class="shape-options">
+                        <div class="shape-option">瘦长</div>
+                        <div class="shape-option active">标准</div>
+                        <div class="shape-option">丰满</div>
+                        <div class="shape-option">肌肉型</div>
+                    </div>
+                </div>
+                
+                <div class="background-selection">
+                    <h4 class="size-title">选择背景</h4>
+                    <div class="background-options">
+                        <div class="bg-option active">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_100/sample.jpg" alt="背景1">
+                        </div>
+                        <div class="bg-option">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_100/shoes.jpg" alt="背景2">
+                        </div>
+                        <div class="bg-option">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_100/leaves.jpg" alt="背景3">
+                        </div>
+                        <div class="bg-option">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_100/outdoors.jpg" alt="背景4">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="random-btn">
+                    <i class="bi bi-magic"></i>
+                    <span>智能随机搭配</span>
+                </button>
+            </div>
+            
+            <!-- 中央模特展示区 -->
+            <div class="model-display">
+                <div class="model-scene">
+                    <img src="https://res.cloudinary.com/demo/image/upload/w_100/sample.jpg" alt="背景" class="scene-background">
+                    <div class="model-figure">
+                        <img src="https://res.cloudinary.com/demo/image/upload/h_700/woman_standing.png" alt="模特" class="model-image">
+                        <img src="" alt="上衣" class="outfit-item" id="top-item">
+                        <img src="" alt="裤子" class="outfit-item" id="bottom-item">
+                        <img src="" alt="鞋子" class="outfit-item" id="shoes-item">
+                        <img src="" alt="配饰" class="outfit-item" id="accessory-item">
+                    </div>
+                </div>
+                
+                <div class="display-controls">
+                    <button class="display-control-btn" title="向左旋转">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <button class="display-control-btn" title="向右旋转">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <button class="display-control-btn" title="放大">
+                        <i class="bi bi-zoom-in"></i>
+                    </button>
+                    <button class="display-control-btn" title="缩小">
+                        <i class="bi bi-zoom-out"></i>
+                    </button>
+                    <button class="display-control-btn" title="重置视角">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 右侧衣物选择区 -->
+            <div class="outfit-selection">
+                <!-- 衣物分类和选择 -->
+                <div class="outfit-categories">
+                    <div class="categories-tabs">
+                        <div class="category-tab active">上衣</div>
+                        <div class="category-tab">裤装</div>
+                        <div class="category-tab">裙装</div>
+                        <div class="category-tab">外套</div>
+                        <div class="category-tab">鞋履</div>
+                        <div class="category-tab">配饰</div>
+                    </div>
+                    
+                    <div class="items-grid">
+                        <div class="clothing-item">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服1">
+                            <div class="item-info">
+                                <div class="item-name">休闲白色T恤</div>
+                                <div class="item-price">¥129</div>
+                            </div>
+                        </div>
+                        <div class="clothing-item active">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服2">
+                            <div class="item-info">
+                                <div class="item-name">格纹翻领衬衫</div>
+                                <div class="item-price">¥199</div>
+                            </div>
+                        </div>
+                        <div class="clothing-item">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服3">
+                            <div class="item-info">
+                                <div class="item-name">条纹针织衫</div>
+                                <div class="item-price">¥249</div>
+                            </div>
+                        </div>
+                        <div class="clothing-item">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服4">
+                            <div class="item-info">
+                                <div class="item-name">V领针织开衫</div>
+                                <div class="item-price">¥329</div>
+                            </div>
+                        </div>
+                        <div class="clothing-item">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服5">
+                            <div class="item-info">
+                                <div class="item-name">纯色打底衫</div>
+                                <div class="item-price">¥159</div>
+                            </div>
+                        </div>
+                        <div class="clothing-item">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="衣服6">
+                            <div class="item-info">
+                                <div class="item-name">拼色卫衣</div>
+                                <div class="item-price">¥239</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 当前搭配信息 -->
+                <div class="current-outfit">
+                    <h3 class="selection-title"><i class="bi bi-list-check"></i>当前搭配</h3>
+                    
+                    <div class="outfit-items-list">
+                        <div class="outfit-item-entry">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="格纹翻领衬衫" class="outfit-item-img">
+                            <div class="outfit-item-details">
+                                <div class="outfit-item-name">格纹翻领衬衫</div>
+                                <div class="outfit-item-category">上衣</div>
+                            </div>
+                            <div class="outfit-item-price">¥199</div>
+                            <button class="remove-item"><i class="bi bi-x-circle"></i></button>
+                        </div>
+                        <div class="outfit-item-entry">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="直筒牛仔裤" class="outfit-item-img">
+                            <div class="outfit-item-details">
+                                <div class="outfit-item-name">直筒牛仔裤</div>
+                                <div class="outfit-item-category">裤装</div>
+                            </div>
+                            <div class="outfit-item-price">¥259</div>
+                            <button class="remove-item"><i class="bi bi-x-circle"></i></button>
+                        </div>
+                        <div class="outfit-item-entry">
+                            <img src="https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg" alt="休闲帆布鞋" class="outfit-item-img">
+                            <div class="outfit-item-details">
+                                <div class="outfit-item-name">休闲帆布鞋</div>
+                                <div class="outfit-item-category">鞋履</div>
+                            </div>
+                            <div class="outfit-item-price">¥299</div>
+                            <button class="remove-item"><i class="bi bi-x-circle"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="outfit-total">
+                        <div class="total-label">总价</div>
+                        <div class="total-price">¥757</div>
+                    </div>
+                    
+                    <div class="outfit-actions">
+                        <button class="outfit-action-btn primary">
+                            <i class="bi bi-bag"></i>
+                            <span>一键购买全部</span>
+                        </button>
+                        <button class="outfit-action-btn secondary">
+                            <i class="bi bi-share"></i>
+                            <span>分享搭配</span>
+                        </button>
+                        <button class="outfit-action-btn secondary">
+                            <i class="bi bi-bookmark"></i>
+                            <span>保存搭配</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // 模特选择交互
+        const modelOptions = document.querySelectorAll('.model-option');
+        modelOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除所有active类
+                modelOptions.forEach(opt => opt.classList.remove('active'));
+                // 给当前选中的添加active类
+                this.classList.add('active');
+                
+                // 根据选择的模特更新模特图像
+                const modelImage = document.querySelector('.model-image');
+                const selectedModelSrc = this.querySelector('img').src.replace('w_200', 'h_700');
+                modelImage.src = selectedModelSrc;
+                
+                // 重置穿搭
+                resetOutfitItems();
+            });
+        });
+        
+        // 尺码选择
+        const sizeOptions = document.querySelectorAll('.size-option');
+        sizeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                sizeOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 体型选择
+        const shapeOptions = document.querySelectorAll('.shape-option');
+        shapeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                shapeOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 背景选择
+        const bgOptions = document.querySelectorAll('.bg-option');
+        bgOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                bgOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 更新背景图片
+                const sceneBackground = document.querySelector('.scene-background');
+                const selectedBgSrc = this.querySelector('img').src.replace('w_100', 'w_1200');
+                sceneBackground.src = selectedBgSrc;
+            });
+        });
+        
+        // 衣物分类标签交互
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里应该根据选择的分类加载对应的衣物
+                // 模拟数据加载，实际应从服务器获取
+                const category = this.textContent;
+                loadClothingItems(category);
+            });
+        });
+        
+        // 模拟加载不同分类的衣物
+        function loadClothingItems(category) {
+            const itemsGrid = document.querySelector('.items-grid');
+            
+            // 清空现有内容
+            itemsGrid.innerHTML = '';
+            
+            // 根据分类生成不同的示例数据
+            let items = [];
+            
+            if (category === '上衣') {
+                items = [
+                    { name: '休闲白色T恤', price: '¥129', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '格纹翻领衬衫', price: '¥199', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '条纹针织衫', price: '¥249', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: 'V领针织开衫', price: '¥329', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '纯色打底衫', price: '¥159', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '拼色卫衣', price: '¥239', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            } else if (category === '裤装') {
+                items = [
+                    { name: '直筒牛仔裤', price: '¥259', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '休闲西装裤', price: '¥299', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '束脚卫裤', price: '¥199', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '工装裤', price: '¥289', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            } else if (category === '裙装') {
+                items = [
+                    { name: 'A字百褶裙', price: '¥229', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '针织半身裙', price: '¥199', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '碎花连衣裙', price: '¥359', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            } else if (category === '外套') {
+                items = [
+                    { name: '牛仔夹克', price: '¥399', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '休闲西装', price: '¥499', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '风衣', price: '¥599', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '羽绒服', price: '¥699', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            } else if (category === '鞋履') {
+                items = [
+                    { name: '休闲帆布鞋', price: '¥299', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '运动跑鞋', price: '¥399', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '乐福鞋', price: '¥359', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '牛津鞋', price: '¥459', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            } else if (category === '配饰') {
+                items = [
+                    { name: '棒球帽', price: '¥129', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '围巾', price: '¥159', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '腰带', price: '¥199', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' },
+                    { name: '手表', price: '¥699', image: 'https://res.cloudinary.com/demo/image/upload/w_150/shoes.jpg' }
+                ];
+            }
+            
+            // 生成HTML
+            items.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'clothing-item';
+                if (index === 1) itemElement.classList.add('active'); // 默认第二个为选中状态
+                
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">${item.price}</div>
+                    </div>
+                `;
+                
+                // 添加点击事件
+                itemElement.addEventListener('click', function() {
+                    // 移除之前选中的
+                    const currentActive = itemsGrid.querySelector('.clothing-item.active');
+                    if (currentActive) currentActive.classList.remove('active');
+                    
+                    // 标记为选中
+                    this.classList.add('active');
+                    
+                    // 根据当前分类应用到模特身上
+                    applyClothingToModel(category, item);
+                    
+                    // 添加到当前搭配列表
+                    addToCurrentOutfit(category, item);
+                });
+                
+                itemsGrid.appendChild(itemElement);
+            });
+        }
+        
+        // 映射分类到模特穿搭部位
+        const categoryToModelPart = {
+            '上衣': 'top-item',
+            '裤装': 'bottom-item',
+            '裙装': 'bottom-item',
+            '外套': 'top-item', // 外套也放在上身
+            '鞋履': 'shoes-item',
+            '配饰': 'accessory-item'
+        };
+        
+        // 应用衣物到模特身上
+        function applyClothingToModel(category, item) {
+            const partId = categoryToModelPart[category];
+            const partElement = document.getElementById(partId);
+            
+            if (partElement) {
+                // 模拟换装效果，实际中应该使用真实的衣物图片
+                partElement.src = item.image;
+                partElement.style.opacity = 0.8; // 使衣物有半透明效果以便模拟穿在模特身上
+            }
+        }
+        
+        // 重置模特穿搭
+        function resetOutfitItems() {
+            const outfitItems = document.querySelectorAll('.outfit-item');
+            outfitItems.forEach(item => {
+                item.src = '';
+            });
+        }
+        
+        // 当前搭配数据
+        let currentOutfit = {
+            '上衣': null,
+            '裤装': null,
+            '裙装': null,
+            '外套': null,
+            '鞋履': null,
+            '配饰': null
+        };
+        
+        // 添加到当前搭配
+        function addToCurrentOutfit(category, item) {
+            // 更新当前搭配数据
+            currentOutfit[category] = item;
+            
+            // 更新UI显示
+            updateCurrentOutfitUI();
+        }
+        
+        // 更新当前搭配UI
+        function updateCurrentOutfitUI() {
+            const outfitList = document.querySelector('.outfit-items-list');
+            outfitList.innerHTML = '';
+            
+            let totalPrice = 0;
+            
+            // 遍历所有已选择的单品
+            Object.entries(currentOutfit).forEach(([category, item]) => {
+                if (item) {
+                    // 添加到列表
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'outfit-item-entry';
+                    
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="outfit-item-img">
+                        <div class="outfit-item-details">
+                            <div class="outfit-item-name">${item.name}</div>
+                            <div class="outfit-item-category">${category}</div>
+                        </div>
+                        <div class="outfit-item-price">${item.price}</div>
+                        <button class="remove-item" data-category="${category}"><i class="bi bi-x-circle"></i></button>
+                    `;
+                    
+                    outfitList.appendChild(itemElement);
+                    
+                    // 计算总价
+                    totalPrice += parseInt(item.price.replace('¥', ''));
+                    
+                    // 添加删除按钮事件
+                    const removeButton = itemElement.querySelector('.remove-item');
+                    removeButton.addEventListener('click', function() {
+                        const categoryToRemove = this.getAttribute('data-category');
+                        removeFromOutfit(categoryToRemove);
+                    });
+                }
+            });
+            
+            // 更新总价
+            document.querySelector('.total-price').textContent = `¥${totalPrice}`;
+        }
+        
+        // 从搭配中移除单品
+        function removeFromOutfit(category) {
+            // 更新数据
+            currentOutfit[category] = null;
+            
+            // 更新模特穿搭显示
+            const partId = categoryToModelPart[category];
+            const partElement = document.getElementById(partId);
+            if (partElement) {
+                partElement.src = '';
+            }
+            
+            // 更新UI
+            updateCurrentOutfitUI();
+        }
+        
+        // 视角控制
+        const rotateLeftBtn = document.querySelectorAll('.display-control-btn')[0];
+        const rotateRightBtn = document.querySelectorAll('.display-control-btn')[1];
+        const zoomInBtn = document.querySelectorAll('.display-control-btn')[2];
+        const zoomOutBtn = document.querySelectorAll('.display-control-btn')[3];
+        const resetViewBtn = document.querySelectorAll('.display-control-btn')[4];
+        
+        let rotationAngle = 0;
+        let zoomLevel = 1;
+        
+        rotateLeftBtn.addEventListener('click', function() {
+            rotationAngle -= 30;
+            updateModelView();
+        });
+        
+        rotateRightBtn.addEventListener('click', function() {
+            rotationAngle += 30;
+            updateModelView();
+        });
+        
+        zoomInBtn.addEventListener('click', function() {
+            zoomLevel += 0.1;
+            if (zoomLevel > 1.5) zoomLevel = 1.5; // 限制最大缩放
+            updateModelView();
+        });
+        
+        zoomOutBtn.addEventListener('click', function() {
+            zoomLevel -= 0.1;
+            if (zoomLevel < 0.7) zoomLevel = 0.7; // 限制最小缩放
+            updateModelView();
+        });
+        
+        resetViewBtn.addEventListener('click', function() {
+            rotationAngle = 0;
+            zoomLevel = 1;
+            updateModelView();
+        });
+        
+        function updateModelView() {
+            const modelFigure = document.querySelector('.model-figure');
+            modelFigure.style.transform = `rotate(${rotationAngle}deg) scale(${zoomLevel})`;
+        }
+        
+        // 随机搭配按钮
+        const randomBtn = document.querySelector('.random-btn');
+        randomBtn.addEventListener('click', function() {
+            // 模拟随机选择衣物
+            const categories = ['上衣', '裤装', '鞋履'];
+            
+            // 重置当前搭配
+            resetOutfitItems();
+            Object.keys(currentOutfit).forEach(key => {
+                currentOutfit[key] = null;
+            });
+            
+            // 对每个分类随机选择一个衣物
+            categories.forEach(category => {
+                // 激活对应的分类标签
+                const categoryTab = [...categoryTabs].find(tab => tab.textContent === category);
+                if (categoryTab) {
+                    categoryTab.click();
+                    
+                    // 等待100ms让界面更新
+                    setTimeout(() => {
+                        // 获取当前分类下的所有衣物
+                        const clothingItems = document.querySelectorAll('.clothing-item');
+                        if (clothingItems.length) {
+                            // 随机选择一个
+                            const randomIndex = Math.floor(Math.random() * clothingItems.length);
+                            clothingItems[randomIndex].click();
+                        }
+                    }, 100);
+                }
+            });
+        });
+        
+        // 初始加载
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化第一个分类的衣物
+            loadClothingItems('上衣');
+            
+            // 初始化当前搭配
+            updateCurrentOutfitUI();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>穿搭识别 - 穿搭推荐</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #9370DB;
+            --secondary-color: #98FB98;
+            --accent-color: #FFCCCB;
+            --text-color: #333333;
+            --light-gray: #f5f5f5;
+            --light-purple: #F5F0FF;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --success-color: #4CAF50;
+            --processing-color: #2196F3;
+            --error-color: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 0.7rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .user-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-actions .login-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 链接输入区域 */
+        .link-input-section {
+            background-color: var(--light-purple);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .link-input-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .link-input-container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .link-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px 0 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .link-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(147, 112, 219, 0.2);
+        }
+        
+        .analyze-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .analyze-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        .analyze-btn:disabled {
+            background-color: var(--medium-gray);
+            cursor: not-allowed;
+        }
+        
+        .platform-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .platform-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-option:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+        
+        .platform-option.active {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        
+        .platform-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .platform-option.active .platform-icon {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .platform-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .link-tips {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        
+        /* 加载动画 */
+        .loader-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-purple);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-text {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        /* 分析结果区域 */
+        .analysis-results {
+            display: none;
+            margin-top: 3rem;
+        }
+        
+        .analysis-results.show {
+            display: block;
+        }
+        
+        .result-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.6rem;
+            margin-right: 1rem;
+        }
+        
+        .section-header .divider {
+            flex: 1;
+            height: 1px;
+            background-color: var(--medium-gray);
+        }
+
+        /* 原始内容展示 */
+        .original-content-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .original-image {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .original-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .original-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .info-header {
+            margin-bottom: 1rem;
+        }
+        
+        .info-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-source {
+            display: flex;
+            align-items: center;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .info-source i {
+            margin-right: 5px;
+        }
+        
+        .info-description {
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .info-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .meta-item i {
+            margin-right: 5px;
+        }
+        
+        /* 穿搭分析 */
+        .outfit-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .outfit-item {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .outfit-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .item-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .outfit-item:hover .item-image img {
+            transform: scale(1.05);
+        }
+        
+        .item-info {
+            padding: 1rem;
+        }
+        
+        .item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .item-category {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: #ff6b6b;
+        }
+        
+        .item-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .item-actions button {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .item-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .outfit-style-analysis {
+            background-color: var(--light-purple);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .style-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .style-title i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        
+        .style-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .style-tag {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .style-description {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .style-match {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .match-bar {
+            flex: 1;
+            height: 8px;
+            background-color: var(--medium-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .match-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        .match-percentage {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* 相似推荐区域 */
+        .similar-outfits-container {
+            position: relative;
+        }
+        
+        .similar-outfits-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 1rem 0;
+            scrollbar-width: none;
+            margin-bottom: 1rem;
+        }
+        
+        .similar-outfits-slider::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .similar-outfit-card {
+            min-width: 250px;
+            margin-right: 1.5rem;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .similar-outfit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .similar-outfit-image {
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .similar-outfit-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .similar-outfit-card:hover .similar-outfit-image img {
+            transform: scale(1.05);
+        }
+        
+        .similar-outfit-info {
+            padding: 1rem;
+        }
+        
+        .similar-outfit-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .similar-outfit-match {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .similarity-percentage {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-right: 0.8rem;
+        }
+        
+        .similarity-bar {
+            flex: 1;
+            height: 4px;
+            background-color: var(--medium-gray);
+            border-radius: 2px;
+        }
+        
+        .similarity-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .similar-outfit-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .similar-outfit-tag {
+            background-color: var(--light-gray);
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        .similar-outfit-price {
+            font-weight: 600;
+            color: #ff6b6b;
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .slider-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* 模特模拟区域 */
+        .model-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .model-selection {
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .model-selection h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .model-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .model-option {
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .model-option.active {
+            border-color: var(--primary-color);
+        }
+        
+        .model-option img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .model-info {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .customize-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .customize-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        .model-preview {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .preview-actions button {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .preview-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .preview-display {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .model-figure {
+            max-height: 500px;
+        }
+        
+        .preview-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            gap: 1rem;
+            background-color: var(--light-gray);
+        }
+        
+        .rotate-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .rotate-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* 响应式设计 */
+        @media screen and (max-width: 900px) {
+            .original-content-container,
+            .model-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .outfit-items {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .platform-selection {
+                flex-wrap: wrap;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .link-input-container {
+                flex-direction: column;
+            }
+            
+            .link-input {
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+            }
+            
+            .analyze-btn {
+                border-radius: 10px;
+                padding: 0.8rem;
+            }
+            
+            .similar-outfit-card {
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="bi bi-stars"></i>穿搭推荐</a>
+        
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="#" class="active">穿搭识别</a>
+            <a href="#">图片上传</a>
+            <a href="#">模特模拟</a>
+            <a href="#">尺码指南</a>
+        </div>
+        
+        <div class="user-actions">
+            <button type="button"><i class="bi bi-bell"></i></button>
+            <button type="button"><i class="bi bi-bookmark"></i></button>
+            <button class="login-btn">登录/注册</button>
+        </div>
+    </nav>
+    
+    <!-- 主内容 -->
+    <div class="container">
+        <div class="page-title">
+            <h1>穿搭识别与推荐</h1>
+            <p>粘贴小红书、抖音或淘宝链接，我们将智能分析识别穿搭风格并推荐相似搭配</p>
+        </div>
+        
+        <!-- 链接输入区域 -->
+        <section class="link-input-section">
+            <h2>输入链接开始分析</h2>
+            
+            <div class="platform-selection">
+                <div class="platform-option active" data-platform="xiaohongshu">
+                    <div class="platform-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <span class="platform-name">小红书</span>
+                </div>
+                
+                <div class="platform-option" data-platform="douyin">
+                    <div class="platform-icon">
+                        <i class="bi bi-music-note-beamed"></i>
+                    </div>
+                    <span class="platform-name">抖音</span>
+                </div>
+                
+                <div class="platform-option" data-platform="taobao">
+                    <div class="platform-icon">
+                        <i class="bi bi-bag"></i>
+                    </div>
+                    <span class="platform-name">淘宝</span>
+                </div>
+                
+                <div class="platform-option" data-platform="other">
+                    <div class="platform-icon">
+                        <i class="bi bi-globe"></i>
+                    </div>
+                    <span class="platform-name">其他</span>
+                </div>
+            </div>
+            
+            <div class="link-input-container">
+                <input type="text" class="link-input" placeholder="粘贴链接，如: https://www.xiaohongshu.com/explore/123456789" id="linkInput">
+                <button class="analyze-btn" id="analyzeBtn">
+                    <i class="bi bi-search"></i> 开始分析
+                </button>
+            </div>
+            
+            <p class="link-tips">支持小红书笔记、抖音视频、淘宝商品等链接，只需复制粘贴即可</p>
+        </section>
+        
+        <!-- 加载动画 -->
+        <div class="loader-container" id="loaderContainer">
+            <div class="loader"></div>
+            <p class="loader-text">AI正在分析穿搭，请稍候...</p>
+        </div>
+        
+        <!-- 分析结果区域 -->
+        <div class="analysis-results" id="analysisResults">
+            <!-- 原始内容展示 -->
+            <section class="result-section original-content">
+                <div class="section-header">
+                    <h2>原始内容</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="original-content-container">
+                    <div class="original-image">
+                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="原始穿搭图片" id="originalImage">
+                    </div>
+                    <div class="original-info">
+                        <div class="info-header">
+                            <h3 class="info-title" id="contentTitle">夏日街头风穿搭分享</h3>
+                            <p class="info-source"><i class="bi bi-link-45deg"></i> 来自: <span id="contentSource">小红书</span></p>
+                        </div>
+                        <div class="info-description" id="contentDescription">
+                            今天分享一套适合夏季的街头风穿搭，简约又时尚。上身是经典的白色T恤，下身搭配宽松的卡其色工装裤，脚踩一双白色运动鞋，整体清爽又有型。这套穿搭特别适合日常出街，逛街购物都很合适。面料也都选择了透气舒适的材质，炎热夏季穿着也不会觉得闷热。
+                        </div>
+                        <div class="info-meta">
+                            <div class="meta-item"><i class="bi bi-heart"></i> 3.2k 喜欢</div>
+                            <div class="meta-item"><i class="bi bi-chat"></i> 156 评论</div>
+                            <div class="meta-item"><i class="bi bi-calendar"></i> 2023-07-15</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 识别的穿搭 -->
+            <section class="result-section outfit-analysis">
+                <div class="section-header">
+                    <h2>穿搭分析</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="outfit-style-analysis">
+                    <h3 class="style-title"><i class="bi bi-stars"></i>风格分析</h3>
+                    <div class="style-tags">
+                        <span class="style-tag">街头风</span>
+                        <span class="style-tag">休闲</span>
+                        <span class="style-tag">简约</span>
+                        <span class="style-tag">夏季</span>
+                    </div>
+                    <p class="style-description">
+                        这是一套典型的夏季街头休闲风穿搭，整体风格简约清爽。白色T恤作为基础款单品，搭配工装裤呈现出街头感，同时保持了舒适度。色彩上以中性色调为主，简洁不失时尚感。这类穿搭在16-40岁年轻群体中非常受欢迎，尤其适合日常休闲场合。
+                    </p>
+                    <div class="style-match">
+                        <div class="match-bar">
+                            <div class="match-fill" style="width: 95%;"></div>
+                        </div>
+                        <span class="match-percentage">95% 匹配度</span>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 1rem;">识别单品</h3>
+                <div class="outfit-items">
+                    <div class="outfit-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="基础白色T恤">
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">纯棉圆领基础白色T恤</h4>
+                            <p class="item-category">上衣 / T恤</p>
+                            <p class="item-price">¥89.00</p>
+                            <div class="item-actions">
+                                <button><i class="bi bi-heart"></i> 收藏</button>
+                                <button><i class="bi bi-bag"></i> 购买</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="outfit-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1473966968600-fa801b869822?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="工装裤">
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">多口袋工装直筒裤</h4>
+                            <p class="item-category">裤装 / 工装裤</p>
+                            <p class="item-price">¥199.00</p>
+                            <div class="item-actions">
+                                <button><i class="bi bi-heart"></i> 收藏</button>
+                                <button><i class="bi bi-bag"></i> 购买</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="outfit-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="白色运动鞋">
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">基础款白色休闲运动鞋</h4>
+                            <p class="item-category">鞋履 / 运动鞋</p>
+                            <p class="item-price">¥329.00</p>
+                            <div class="item-actions">
+                                <button><i class="bi bi-heart"></i> 收藏</button>
+                                <button><i class="bi bi-bag"></i> 购买</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="outfit-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1559563458-527698bf5295?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="帆布挎包">
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">简约帆布单肩斜挎包</h4>
+                            <p class="item-category">配饰 / 包袋</p>
+                            <p class="item-price">¥129.00</p>
+                            <div class="item-actions">
+                                <button><i class="bi bi-heart"></i> 收藏</button>
+                                <button><i class="bi bi-bag"></i> 购买</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 相似推荐 -->
+            <section class="result-section similar-outfits">
+                <div class="section-header">
+                    <h2>相似穿搭推荐</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="similar-outfits-container">
+                    <div class="similar-outfits-slider" id="similarOutfitsSlider">
+                        <div class="similar-outfit-card">
+                            <div class="similar-outfit-image">
+                                <img src="https://images.unsplash.com/photo-1520294472078-7f68e58a26e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭1">
+                            </div>
+                            <div class="similar-outfit-info">
+                                <h4 class="similar-outfit-title">黑白配色休闲街头风</h4>
+                                <div class="similar-outfit-match">
+                                    <span class="similarity-percentage">92%</span>
+                                    <div class="similarity-bar">
+                                        <div class="similarity-fill" style="width: 92%;"></div>
+                                    </div>
+                                </div>
+                                <div class="similar-outfit-tags">
+                                    <span class="similar-outfit-tag">街头</span>
+                                    <span class="similar-outfit-tag">休闲</span>
+                                    <span class="similar-outfit-tag">黑白</span>
+                                </div>
+                                <p class="similar-outfit-price">预估价格: ¥699</p>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-outfit-card">
+                            <div class="similar-outfit-image">
+                                <img src="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭2">
+                            </div>
+                            <div class="similar-outfit-info">
+                                <h4 class="similar-outfit-title">蓝白配色简约潮流</h4>
+                                <div class="similar-outfit-match">
+                                    <span class="similarity-percentage">89%</span>
+                                    <div class="similarity-bar">
+                                        <div class="similarity-fill" style="width: 89%;"></div>
+                                    </div>
+                                </div>
+                                <div class="similar-outfit-tags">
+                                    <span class="similar-outfit-tag">潮流</span>
+                                    <span class="similar-outfit-tag">牛仔</span>
+                                    <span class="similar-outfit-tag">简约</span>
+                                </div>
+                                <p class="similar-outfit-price">预估价格: ¥599</p>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-outfit-card">
+                            <div class="similar-outfit-image">
+                                <img src="https://images.unsplash.com/photo-1507114845806-0347f6150324?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭3">
+                            </div>
+                            <div class="similar-outfit-info">
+                                <h4 class="similar-outfit-title">夏季宽松工装风搭配</h4>
+                                <div class="similar-outfit-match">
+                                    <span class="similarity-percentage">85%</span>
+                                    <div class="similarity-bar">
+                                        <div class="similarity-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                                <div class="similar-outfit-tags">
+                                    <span class="similar-outfit-tag">工装</span>
+                                    <span class="similar-outfit-tag">中性</span>
+                                    <span class="similar-outfit-tag">宽松</span>
+                                </div>
+                                <p class="similar-outfit-price">预估价格: ¥759</p>
+                            </div>
+                        </div>
+                        
+                        <div class="similar-outfit-card">
+                            <div class="similar-outfit-image">
+                                <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="相似穿搭4">
+                            </div>
+                            <div class="similar-outfit-info">
+                                <h4 class="similar-outfit-title">复古色调休闲套装</h4>
+                                <div class="similar-outfit-match">
+                                    <span class="similarity-percentage">80%</span>
+                                    <div class="similarity-bar">
+                                        <div class="similarity-fill" style="width: 80%;"></div>
+                                    </div>
+                                </div>
+                                <div class="similar-outfit-tags">
+                                    <span class="similar-outfit-tag">复古</span>
+                                    <span class="similar-outfit-tag">休闲</span>
+                                    <span class="similar-outfit-tag">套装</span>
+                                </div>
+                                <p class="similar-outfit-price">预估价格: ¥629</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-controls">
+                        <button class="slider-btn" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+                        <button class="slider-btn" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 模特模拟 -->
+            <section class="result-section model-simulation">
+                <div class="section-header">
+                    <h2>模特穿搭模拟</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="model-container">
+                    <div class="model-selection">
+                        <h3>选择模特</h3>
+                        <div class="model-options">
+                            <div class="model-option active" data-model="model1">
+                                <img src="https://images.unsplash.com/photo-1554669227-a68a3a8cec8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="女性模特1">
+                            </div>
+                            <div class="model-option" data-model="model2">
+                                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="女性模特2">
+                            </div>
+                            <div class="model-option" data-model="model3">
+                                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="男性模特1">
+                            </div>
+                            <div class="model-option" data-model="model4">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="男性模特2">
+                            </div>
+                            <div class="model-option" data-model="model5">
+                                <img src="https://images.unsplash.com/photo-1559582930-bb01987cf4dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="男性模特3">
+                            </div>
+                            <div class="model-option" data-model="model6">
+                                <img src="https://images.unsplash.com/photo-1499651681375-8afc5a4db253?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="女性模特3">
+                            </div>
+                        </div>
+                        <p class="model-info">选择合适的模特形象，查看穿搭效果。模特身高、体型数据仅供参考。</p>
+                        <button class="customize-btn">自定义模特形象</button>
+                    </div>
+                    
+                    <div class="model-preview">
+                        <div class="preview-header">
+                            <h3 class="preview-title">模拟效果</h3>
+                            <div class="preview-actions">
+                                <button><i class="bi bi-download"></i></button>
+                                <button><i class="bi bi-share"></i></button>
+                                <button><i class="bi bi-three-dots"></i></button>
+                            </div>
+                        </div>
+                        <div class="preview-display">
+                            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="模特穿搭效果" class="model-figure" id="modelPreview">
+                        </div>
+                        <div class="preview-controls">
+                            <button class="rotate-btn"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            <button class="rotate-btn"><i class="bi bi-arrow-clockwise"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // 平台选择
+        const platformOptions = document.querySelectorAll('.platform-option');
+        platformOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                platformOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 链接分析功能
+        const linkInput = document.getElementById('linkInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loaderContainer = document.getElementById('loaderContainer');
+        const analysisResults = document.getElementById('analysisResults');
+        
+        analyzeBtn.addEventListener('click', function() {
+            if (linkInput.value.trim() === '') {
+                alert('请输入链接进行分析');
+                return;
+            }
+            
+            // 显示加载动画
+            loaderContainer.style.display = 'flex';
+            
+            // 模拟API请求延迟
+            setTimeout(() => {
+                // 隐藏加载动画
+                loaderContainer.style.display = 'none';
+                
+                // 显示分析结果
+                analysisResults.classList.add('show');
+                
+                // 滚动到结果区域
+                analysisResults.scrollIntoView({behavior: 'smooth'});
+            }, 2000);
+        });
+        
+        // 相似穿搭滑块控制
+        const similarOutfitsSlider = document.getElementById('similarOutfitsSlider');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        prevBtn.addEventListener('click', function() {
+            similarOutfitsSlider.scrollBy({
+                left: -300,
+                behavior: 'smooth'
+            });
+        });
+        
+        nextBtn.addEventListener('click', function() {
+            similarOutfitsSlider.scrollBy({
+                left: 300,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 模特选择功能
+        const modelOptions = document.querySelectorAll('.model-option');
+        const modelPreview = document.getElementById('modelPreview');
+        
+        modelOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                modelOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 在真实应用中，这里会根据选择的模特和识别的穿搭生成模拟图片
+                // 这里仅用于演示
+                const modelSrc = this.querySelector('img').src;
+                if (modelSrc.includes('male')) {
+                    modelPreview.src = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80";
+                } else {
+                    modelPreview.src = "https://images.unsplash.com/photo-1507114845806-0347f6150324?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80";
+                }
+            });
+        });
+        
+        // 为演示目的，默认显示结果
+        // 实际应用中应该在链接分析完成后才显示结果
+        // analysisResults.classList.add('show');
+    </script>
+</body>
+</html> 

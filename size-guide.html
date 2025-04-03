@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>尺码指南 - 穿搭推荐</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #9370DB;
+            --secondary-color: #98FB98;
+            --accent-color: #FFCCCB;
+            --text-color: #333333;
+            --light-gray: #f5f5f5;
+            --light-purple: #F5F0FF;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --error-color: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 0.7rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .user-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-actions .login-btn:hover {
+            background-color: #8067c3;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem 1rem 0;
+        }
+        
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5% 3rem;
+        }
+        
+        /* 通用卡片样式 */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .card-header i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* 导航标签 */
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .tab-navigation::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab-item {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab-item:hover {
+            color: var(--primary-color);
+        }
+        
+        .tab-item.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #8067c3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* 输入组件 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.2);
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-group .form-control {
+            flex: 1;
+            border-right: none;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        
+        .input-group-append {
+            padding: 0.8rem 1rem;
+            background-color: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-left: none;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+        
+        /* 提示框 */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-info {
+            background-color: rgba(147, 112, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .alert-warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        /* 行布局 */
+        .row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .col-left {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .col-right {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* 表单样式 */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 标签页内容 */
+        .tab-content {
+            display: block;
+        }
+        
+        .tab-content.hidden {
+            display: none;
+        }
+        
+        /* 尺码结果样式 */
+        .size-result {
+            background-color: var(--light-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: 100%;
+        }
+        
+        .size-result h3 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+        
+        .result-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .result-label {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .result-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .result-info {
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        /* 测量指南样式 */
+        .measure-visual {
+            position: relative;
+            text-align: center;
+        }
+        
+        .measure-image {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        
+        .measure-points {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .measure-point {
+            position: absolute;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .measure-point:hover {
+            background-color: #8067c3;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .measure-detail {
+            background-color: var(--light-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .measure-detail.hidden {
+            display: none;
+        }
+        
+        .measure-detail h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .measure-tip {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .measure-tools {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .measure-tools h4 {
+            margin-bottom: 0.8rem;
+            color: var(--text-color);
+        }
+        
+        .measure-help {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        /* 筛选器样式 */
+        .size-filter {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            flex: 1;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+        
+        /* 尺码表样式 */
+        .size-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        .size-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        
+        .size-table th {
+            background-color: var(--light-purple);
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .size-table td {
+            padding: 0.8rem;
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .size-table tbody tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+        
+        .size-table tbody tr:hover {
+            background-color: var(--light-purple);
+        }
+        
+        .size-table-note {
+            background-color: rgba(147, 112, 219, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .note-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
+        
+        .note-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            color: var(--dark-gray);
+        }
+        
+        .note-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 转换器样式 */
+        .converter-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .converter-form {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .converter-result {
+            flex: 1;
+            min-width: 300px;
+            background-color: var(--light-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .result-title {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .converted-size {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .converted-label {
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .converted-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .converted-details {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .conversion-tables-toggle {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            color: #8067c3;
+            text-decoration: underline;
+        }
+        
+        .conversion-tables {
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .conversion-tables.hidden {
+            display: none;
+        }
+        
+        /* FAQ样式 */
+        .faqs {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .faq-item {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background-color: var(--light-purple);
+        }
+        
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s ease;
+            color: var(--primary-color);
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 1.2rem;
+            max-height: 1000px;
+        }
+        
+        .faq-answer p {
+            margin-bottom: 1rem;
+        }
+        
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .faq-answer ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faq-answer li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 品牌差异说明样式 */
+        .brand-difference-intro {
+            margin-bottom: 2rem;
+        }
+        
+        .brand-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .brand-category h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .brand-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .brand-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .brand-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .brand-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .brand-size-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .feature-icon {
+            font-size: 1.2rem;
+        }
+        
+        .feature-text {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        .brand-size-tip {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .brand-summary {
+            background-color: var(--light-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .summary-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        /* 隐藏类 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="bi bi-stars"></i>穿搭推荐</a>
+        
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="style-recognition.html">穿搭识别</a>
+            <a href="image-upload.html">图片上传</a>
+            <a href="model-simulation.html">模特模拟</a>
+            <a href="#" class="active">尺码指南</a>
+        </div>
+        
+        <div class="user-actions">
+            <button type="button"><i class="bi bi-bell"></i></button>
+            <button type="button"><i class="bi bi-bookmark"></i></button>
+            <button class="login-btn">登录/注册</button>
+        </div>
+    </nav>
+    
+    <!-- 页面标题 -->
+    <div class="page-title">
+        <h1>尺码指南</h1>
+        <p>找到你完美的尺码，选择最合身的服装，告别选购烦恼和退换货</p>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="container">
+        <!-- 个人尺码计算器 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-calculator"></i>
+                <h2>个人尺码计算器</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>提示：</strong> 输入您的身体测量数据，我们将为您推荐最合适的尺码。所有数据仅用于计算，不会被保存。
+                </div>
+                
+                <div class="tab-navigation">
+                    <div class="tab-item active" data-tab="women">女装尺码</div>
+                    <div class="tab-item" data-tab="men">男装尺码</div>
+                    <div class="tab-item" data-tab="kids">儿童尺码</div>
+                    <div class="tab-item" data-tab="shoes">鞋履尺码</div>
+                </div>
+                
+                <div class="tab-content" id="womenSizeCalculator">
+                    <div class="row">
+                        <div class="col-left">
+                            <form id="womenSizeForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">胸围</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="womenBust" placeholder="例：86">
+                                            <div class="input-group-append">厘米</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">腰围</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="womenWaist" placeholder="例：66">
+                                            <div class="input-group-append">厘米</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">臀围</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="womenHips" placeholder="例：96">
+                                            <div class="input-group-append">厘米</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">身高</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="womenHeight" placeholder="例：165">
+                                            <div class="input-group-append">厘米</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">体重（可选）</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="womenWeight" placeholder="例：55">
+                                        <div class="input-group-append">公斤</div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="womenCalculateBtn">
+                                        <i class="bi bi-check-circle"></i> 计算我的尺码
+                                    </button>
+                                    <button type="reset" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-right">
+                            <div class="size-result">
+                                <h3>您的推荐尺码</h3>
+                                <div class="result-content">
+                                    <div class="result-item">
+                                        <div class="result-label">上装尺码</div>
+                                        <div class="result-value" id="womenTopSize">-</div>
+                                    </div>
+                                    <div class="result-item">
+                                        <div class="result-label">下装尺码</div>
+                                        <div class="result-value" id="womenBottomSize">-</div>
+                                    </div>
+                                    <div class="result-info">
+                                        <p>根据您的测量数据，我们推荐选择以上尺码。如果您介于两个尺码之间，建议选择较大的尺码以获得更舒适的穿着体验。</p>
+                                    </div>
+                                    <div class="result-actions">
+                                        <button class="btn btn-secondary">
+                                            <i class="bi bi-bookmark"></i> 保存我的尺码
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他计算器标签页内容 (默认隐藏) -->
+                <div class="tab-content hidden" id="menSizeCalculator">
+                    <!-- 男装尺码计算器内容 (与女装类似但数值不同) -->
+                </div>
+                <div class="tab-content hidden" id="kidsSizeCalculator">
+                    <!-- 儿童尺码计算器内容 -->
+                </div>
+                <div class="tab-content hidden" id="shoesSizeCalculator">
+                    <!-- 鞋履尺码计算器内容 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 测量指南 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-rulers"></i>
+                <h2>测量指南</h2>
+            </div>
+            <div class="card-body">
+                <div class="tab-navigation">
+                    <div class="tab-item active" data-tab="measure-women">女装测量</div>
+                    <div class="tab-item" data-tab="measure-men">男装测量</div>
+                    <div class="tab-item" data-tab="measure-shoes">鞋履测量</div>
+                </div>
+                
+                <div class="tab-content" id="measureWomen">
+                    <div class="row">
+                        <div class="col-left">
+                            <div class="measure-visual">
+                                <img src="https://res.cloudinary.com/demo/image/upload/w_400/woman_measure.png" alt="女装测量示意图" class="measure-image">
+                                <div class="measure-points">
+                                    <div class="measure-point" style="top: 25%; left: 50%;" data-measure="bust">胸围</div>
+                                    <div class="measure-point" style="top: 40%; left: 50%;" data-measure="waist">腰围</div>
+                                    <div class="measure-point" style="top: 55%; left: 50%;" data-measure="hips">臀围</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-right">
+                            <div class="measure-detail" id="bustMeasure">
+                                <h3>如何测量胸围</h3>
+                                <p>身体站直，将软尺水平绕过胸部最突出处测量，保持软尺平行于地面且不要过紧或过松。</p>
+                                <div class="measure-tip">
+                                    <strong>贴心提示：</strong> 穿着薄款无衬垫文胸测量效果更准确。
+                                </div>
+                            </div>
+                            <div class="measure-detail hidden" id="waistMeasure">
+                                <h3>如何测量腰围</h3>
+                                <p>身体自然站立，将软尺水平绕过腰部最细处（通常在肚脐上方约2厘米处），呼吸正常，不要刻意收腹。</p>
+                            </div>
+                            <div class="measure-detail hidden" id="hipsMeasure">
+                                <h3>如何测量臀围</h3>
+                                <p>身体自然站立，将软尺水平绕过臀部最宽处（通常位于小腹以下约20厘米处），确保软尺平行于地面。</p>
+                            </div>
+                            
+                            <div class="measure-tools">
+                                <h4>测量工具</h4>
+                                <p>推荐使用柔软的卷尺进行测量，若无专业卷尺，可使用绳子或细带后用直尺测量长度。</p>
+                                
+                                <div class="measure-help">
+                                    <button class="btn btn-secondary">
+                                        <i class="bi bi-play-circle"></i> 观看测量视频教程
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他测量指南标签页内容 (默认隐藏) -->
+                <div class="tab-content hidden" id="measureMen">
+                    <!-- 男装测量指南内容 -->
+                </div>
+                <div class="tab-content hidden" id="measureShoes">
+                    <!-- 鞋履测量指南内容 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 服装分类尺码表 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-table"></i>
+                <h2>服装分类尺码表</h2>
+            </div>
+            <div class="card-body">
+                <div class="tab-navigation">
+                    <div class="tab-item active" data-tab="top-size">上装尺码</div>
+                    <div class="tab-item" data-tab="bottom-size">下装尺码</div>
+                    <div class="tab-item" data-tab="dress-size">连衣裙尺码</div>
+                    <div class="tab-item" data-tab="shoes-size">鞋履尺码</div>
+                    <div class="tab-item" data-tab="kids-size">儿童尺码</div>
+                </div>
+                
+                <div class="size-filter">
+                    <div class="filter-label">筛选：</div>
+                    <div class="filter-options">
+                        <div class="filter-group">
+                            <label class="filter-item">
+                                <input type="radio" name="gender" value="female" checked>
+                                <span>女装</span>
+                            </label>
+                            <label class="filter-item">
+                                <input type="radio" name="gender" value="male">
+                                <span>男装</span>
+                            </label>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-item">
+                                <input type="checkbox" name="style" value="standard" checked>
+                                <span>标准</span>
+                            </label>
+                            <label class="filter-item">
+                                <input type="checkbox" name="style" value="slim">
+                                <span>修身</span>
+                            </label>
+                            <label class="filter-item">
+                                <input type="checkbox" name="style" value="loose">
+                                <span>宽松</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="topSizeTable">
+                    <div class="size-table-wrapper">
+                        <table class="size-table">
+                            <thead>
+                                <tr>
+                                    <th>国际尺码</th>
+                                    <th>中国尺码</th>
+                                    <th>胸围 (cm)</th>
+                                    <th>腰围 (cm)</th>
+                                    <th>身高 (cm)</th>
+                                    <th>体型参考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>XS</td>
+                                    <td>155/80A</td>
+                                    <td>76-84</td>
+                                    <td>60-68</td>
+                                    <td>150-160</td>
+                                    <td>纤细</td>
+                                </tr>
+                                <tr>
+                                    <td>S</td>
+                                    <td>160/84A</td>
+                                    <td>84-88</td>
+                                    <td>68-72</td>
+                                    <td>155-165</td>
+                                    <td>苗条</td>
+                                </tr>
+                                <tr>
+                                    <td>M</td>
+                                    <td>165/88A</td>
+                                    <td>88-92</td>
+                                    <td>72-76</td>
+                                    <td>160-170</td>
+                                    <td>标准</td>
+                                </tr>
+                                <tr>
+                                    <td>L</td>
+                                    <td>170/92A</td>
+                                    <td>92-96</td>
+                                    <td>76-80</td>
+                                    <td>165-175</td>
+                                    <td>丰满</td>
+                                </tr>
+                                <tr>
+                                    <td>XL</td>
+                                    <td>175/96A</td>
+                                    <td>96-100</td>
+                                    <td>80-84</td>
+                                    <td>170-180</td>
+                                    <td>丰满</td>
+                                </tr>
+                                <tr>
+                                    <td>XXL</td>
+                                    <td>180/100A</td>
+                                    <td>100-104</td>
+                                    <td>84-88</td>
+                                    <td>175-185</td>
+                                    <td>丰满</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="size-table-note">
+                        <div class="note-title">
+                            <i class="bi bi-info-circle"></i> 尺寸说明
+                        </div>
+                        <div class="note-content">
+                            <ul>
+                                <li>以上数据为标准尺寸，实际服装可能因款式、品牌而略有差异</li>
+                                <li>尺寸数值表示的是体型测量数据范围，选择时以较接近的范围为准</li>
+                                <li>如您的测量数据在两个尺码之间，建议选择较大的尺码</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他尺码表标签页内容 (默认隐藏) -->
+                <div class="tab-content hidden" id="bottomSizeTable">
+                    <!-- 下装尺码表 -->
+                </div>
+                <div class="tab-content hidden" id="dressSizeTable">
+                    <!-- 连衣裙尺码表 -->
+                </div>
+                <div class="tab-content hidden" id="shoesSizeTable">
+                    <!-- 鞋履尺码表 -->
+                </div>
+                <div class="tab-content hidden" id="kidsSizeTable">
+                    <!-- 儿童尺码表 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 国际尺码转换 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-globe"></i>
+                <h2>国际尺码转换</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>提示：</strong> 使用下面的转换器将不同国家或地区的尺码标准进行互相转换。
+                </div>
+                
+                <div class="converter-panel">
+                    <div class="converter-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">服装类型</label>
+                                <select class="form-control" id="convertType">
+                                    <option value="tops">上装</option>
+                                    <option value="bottoms">下装</option>
+                                    <option value="shoes">鞋履</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">性别</label>
+                                <select class="form-control" id="convertGender">
+                                    <option value="women">女装</option>
+                                    <option value="men">男装</option>
+                                    <option value="kids">儿童</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">原尺码标准</label>
+                                <select class="form-control" id="fromSizeStandard">
+                                    <option value="cn">中国</option>
+                                    <option value="intl">国际通用</option>
+                                    <option value="us">美国</option>
+                                    <option value="uk">英国</option>
+                                    <option value="eu">欧洲</option>
+                                    <option value="jp">日本</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">目标尺码标准</label>
+                                <select class="form-control" id="toSizeStandard">
+                                    <option value="intl">国际通用</option>
+                                    <option value="cn">中国</option>
+                                    <option value="us">美国</option>
+                                    <option value="uk">英国</option>
+                                    <option value="eu">欧洲</option>
+                                    <option value="jp">日本</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">输入尺码</label>
+                            <input type="text" class="form-control" id="fromSizeValue" placeholder="例如：M, 160/84A, 9 等">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="convertBtn">
+                                <i class="bi bi-arrow-repeat"></i> 转换尺码
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="converter-result">
+                        <div class="result-title">转换结果</div>
+                        <div class="converted-size">
+                            <div class="converted-label">等同于</div>
+                            <div class="converted-value" id="convertedSize">-</div>
+                        </div>
+                        <div class="converted-details" id="convertedDetails">
+                            <!-- 转换详情将通过JS动态填充 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="conversion-tables-toggle">
+                    <button class="toggle-btn" id="showTablesBtn">
+                        <i class="bi bi-eye"></i> 查看完整尺码对照表
+                    </button>
+                </div>
+                
+                <div class="conversion-tables hidden" id="conversionTables">
+                    <div class="tab-navigation">
+                        <div class="tab-item active" data-tab="women-conversion">女装对照</div>
+                        <div class="tab-item" data-tab="men-conversion">男装对照</div>
+                        <div class="tab-item" data-tab="shoes-conversion">鞋履对照</div>
+                    </div>
+                    
+                    <div class="tab-content" id="womenConversionTable">
+                        <div class="size-table-wrapper">
+                            <table class="size-table">
+                                <thead>
+                                    <tr>
+                                        <th>国际标准</th>
+                                        <th>中国</th>
+                                        <th>美国</th>
+                                        <th>英国</th>
+                                        <th>欧洲</th>
+                                        <th>日本</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>XS</td>
+                                        <td>155/80A</td>
+                                        <td>0-2</td>
+                                        <td>4-6</td>
+                                        <td>32-34</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>S</td>
+                                        <td>160/84A</td>
+                                        <td>4-6</td>
+                                        <td>8-10</td>
+                                        <td>36-38</td>
+                                        <td>7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>M</td>
+                                        <td>165/88A</td>
+                                        <td>8-10</td>
+                                        <td>12-14</td>
+                                        <td>40-42</td>
+                                        <td>9</td>
+                                    </tr>
+                                    <tr>
+                                        <td>L</td>
+                                        <td>170/92A</td>
+                                        <td>12-14</td>
+                                        <td>16-18</td>
+                                        <td>44-46</td>
+                                        <td>11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>XL</td>
+                                        <td>175/96A</td>
+                                        <td>16-18</td>
+                                        <td>20-22</td>
+                                        <td>48-50</td>
+                                        <td>13</td>
+                                    </tr>
+                                    <tr>
+                                        <td>XXL</td>
+                                        <td>180/100A</td>
+                                        <td>20-22</td>
+                                        <td>24-26</td>
+                                        <td>52-54</td>
+                                        <td>15</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- 其他转换表标签页内容 (默认隐藏) -->
+                    <div class="tab-content hidden" id="menConversionTable">
+                        <!-- 男装尺码转换表 -->
+                    </div>
+                    <div class="tab-content hidden" id="shoesConversionTable">
+                        <!-- 鞋履尺码转换表 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 常见问题解答 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-question-circle"></i>
+                <h2>常见问题解答</h2>
+            </div>
+            <div class="card-body">
+                <div class="faqs">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="question-text">如何确定我的准确尺码？</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>确定准确尺码最好的方法是使用软尺测量自己的关键身体部位，然后对照我们的尺码表。对于上装，请测量胸围、腰围；下装则测量腰围、臀围；鞋履则测量脚长。请参考本页面的测量指南获取详细的测量方法。</p>
+                            <p>如果您发现自己的尺寸介于两个尺码之间，建议选择较大的尺码。此外，不同款式和品牌的尺码可能略有不同，建议查看产品详情页中的具体尺码信息。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="question-text">不同品牌之间的尺码有什么差异？</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>不同品牌使用的尺码标准可能有所不同，这通常取决于品牌的目标受众、设计理念和原产地。一般来说，亚洲品牌的尺码通常比欧美品牌的小1-2个尺码。</p>
+                            <p>例如，您在某国内品牌穿M码，在某些欧美品牌可能需要选择S码。高端设计师品牌通常采用更为偏小的尺码设计。我们建议您在购买前查看每个品牌的具体尺码表，并考虑该品牌的尺码倾向。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="question-text">如何测量小孩的尺码？</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>测量儿童尺码的方法与成人类似，但儿童尺码通常更依赖于身高和年龄。测量时，建议让孩子穿着轻薄的衣物站直，用软尺测量以下部位：</p>
+                            <ul>
+                                <li>身高：从头顶到脚底的垂直距离</li>
+                                <li>胸围：绕过胸部最宽处测量</li>
+                                <li>腰围：绕过肚脐水平测量</li>
+                            </ul>
+                            <p>由于儿童生长快速，建议选择稍大一些的尺码，留有成长空间。一般来说，对于迅速生长的儿童，可以选择比当前测量结果大1-2个尺码的服装。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="question-text">鞋码怎么换算成厘米？</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>鞋码与厘米的换算因地区标准不同而有所差异：</p>
+                            <ul>
+                                <li>欧洲鞋码(EU)：厘米 × 1.5 + 2.5 = 欧码</li>
+                                <li>美国女鞋码(US)：厘米 × 3/2 - 21 = 美码</li>
+                                <li>美国男鞋码(US)：厘米 × 3/2 - 22 = 美码</li>
+                                <li>英国鞋码(UK)：美码 - 0.5 = 英码</li>
+                                <li>中国鞋码：基本与厘米相同，如脚长24厘米对应中国鞋码240</li>
+                            </ul>
+                            <p>注意，这些换算仅为近似值，不同品牌可能有细微差异。最准确的方法是测量脚长（从脚后跟到最长脚趾的距离），然后查看品牌的具体尺码表。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="question-text">如何根据身高选择裤长？</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>选择合适的裤长通常需要考虑两个关键测量值：内裤长（裤裆到脚踝的距离）和外裤长（腰部到脚踝的距离）。但如果您只知道身高，可以参考以下一般性指导：</p>
+                            <ul>
+                                <li>身高150-160cm：内裤长约70-75cm</li>
+                                <li>身高160-170cm：内裤长约75-80cm</li>
+                                <li>身高170-180cm：内裤长约80-85cm</li>
+                                <li>身高180-190cm：内裤长约85-90cm</li>
+                            </ul>
+                            <p>请注意，这些数值会因个人腿长比例而异。对于更准确的选择，最好是测量您现有合身裤子的内裤长，作为购买新裤子的参考。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 品牌尺码差异说明 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-tags"></i>
+                <h2>品牌尺码差异说明</h2>
+            </div>
+            <div class="card-body">
+                <div class="brand-difference-intro">
+                    <p>不同品牌的服装尺码可能有显著差异，这主要因品牌定位、目标客群和设计风格而异。以下是一些主流品牌的尺码特点，供您参考：</p>
+                </div>
+                
+                <div class="brand-list">
+                    <div class="brand-category">
+                        <h3><i class="bi bi-globe-asia-australia"></i> 亚洲品牌</h3>
+                        <div class="brand-cards">
+                            <div class="brand-card">
+                                <div class="brand-name">优衣库 (UNIQLO)</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码较标准，略偏小</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    相比国际品牌偏小约0.5码，建议按照正常尺码或大半码选择。
+                                </div>
+                            </div>
+                            
+                            <div class="brand-card">
+                                <div class="brand-name">无印良品 (MUJI)</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码偏小</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    与国际尺码相比小1码左右，建议选择比平常大1码的尺寸。
+                                </div>
+                            </div>
+                            
+                            <div class="brand-card">
+                                <div class="brand-name">李宁 (Li-Ning)</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码适中</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    运动服装有弹性，尺码比较贴合亚洲人体型，建议选择平常尺码。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="brand-category">
+                        <h3><i class="bi bi-globe-americas"></i> 欧美品牌</h3>
+                        <div class="brand-cards">
+                            <div class="brand-card">
+                                <div class="brand-name">H&M</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码偏大</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    比亚洲品牌普遍大1码，建议选择比平常小1码的尺寸。
+                                </div>
+                            </div>
+                            
+                            <div class="brand-card">
+                                <div class="brand-name">ZARA</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码略小</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    虽为欧洲品牌但设计较贴身，建议选择平常尺码或大半码。
+                                </div>
+                            </div>
+                            
+                            <div class="brand-card">
+                                <div class="brand-name">Levi's</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码偏大</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    牛仔裤偏大，尤其洗涤后可能会有轻微收缩，建议选择比平常小1码。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="brand-category">
+                        <h3><i class="bi bi-gem"></i> 高端设计师品牌</h3>
+                        <div class="brand-cards">
+                            <div class="brand-card">
+                                <div class="brand-name">Gucci</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码偏小</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    意大利设计普遍偏小，建议选择比平常大1-2码的尺寸。
+                                </div>
+                            </div>
+                            
+                            <div class="brand-card">
+                                <div class="brand-name">Chanel</div>
+                                <div class="brand-size-feature">
+                                    <span class="feature-icon">📏</span>
+                                    <span class="feature-text">尺码较小</span>
+                                </div>
+                                <div class="brand-size-tip">
+                                    法国高级时装品牌，尺码通常比标准小1-2码，建议选择更大尺码。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brand-summary">
+                    <div class="summary-title">
+                        <i class="bi bi-lightbulb"></i> 选购建议
+                    </div>
+                    <div class="summary-content">
+                        <p>1. 首次购买不熟悉的品牌时，建议仔细查看官方尺码表</p>
+                        <p>2. 留意用户评价中关于尺码的反馈，了解实际穿着体验</p>
+                        <p>3. 选择有明确退换货政策的店铺，确保尺码不合适时可以更换</p>
+                        <p>4. 考虑衣物材质，弹性面料可选择偏小的尺码，非弹性面料则需预留空间</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // 标签页切换功能
+        const initTabs = () => {
+            document.querySelectorAll('.tab-navigation').forEach(tabNav => {
+                const tabs = tabNav.querySelectorAll('.tab-item');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        // 移除所有active类
+                        tabs.forEach(t => t.classList.remove('active'));
+                        // 添加active类到当前标签
+                        tab.classList.add('active');
+                        
+                        // 隐藏所有内容
+                        const tabContents = document.querySelectorAll('.tab-content');
+                        tabContents.forEach(content => {
+                            content.classList.add('hidden');
+                        });
+                        
+                        // 显示对应内容
+                        const tabId = tab.getAttribute('data-tab');
+                        let targetContent;
+                        
+                        // 根据不同的标签组选择正确的目标内容
+                        if (tabId.includes('measure-')) {
+                            targetContent = document.getElementById(tabId);
+                        } else if (tabId.includes('-conversion')) {
+                            targetContent = document.getElementById(tabId + 'Table');
+                        } else if (tabId.includes('-size')) {
+                            targetContent = document.getElementById(tabId + 'Table');
+                        } else {
+                            targetContent = document.getElementById(tabId + 'SizeCalculator');
+                        }
+                        
+                        if (targetContent) {
+                            targetContent.classList.remove('hidden');
+                        }
+                    });
+                });
+            });
+        };
+        
+        // 测量点击交互
+        const initMeasurePoints = () => {
+            const measurePoints = document.querySelectorAll('.measure-point');
+            measurePoints.forEach(point => {
+                point.addEventListener('click', () => {
+                    // 隐藏所有测量详情
+                    document.querySelectorAll('.measure-detail').forEach(detail => {
+                        detail.classList.add('hidden');
+                    });
+                    
+                    // 显示对应的测量详情
+                    const measureType = point.getAttribute('data-measure');
+                    const targetDetail = document.getElementById(measureType + 'Measure');
+                    if (targetDetail) {
+                        targetDetail.classList.remove('hidden');
+                    }
+                });
+            });
+        };
+        
+        // FAQ收起展开功能
+        const initFAQ = () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    // 关闭其他所有FAQ
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // 切换当前FAQ的状态
+                    item.classList.toggle('active');
+                });
+            });
+        };
+        
+        // 尺码计算功能
+        const initSizeCalculator = () => {
+            const womenCalculateBtn = document.getElementById('womenCalculateBtn');
+            if (womenCalculateBtn) {
+                womenCalculateBtn.addEventListener('click', () => {
+                    const bust = parseFloat(document.getElementById('womenBust').value) || 0;
+                    const waist = parseFloat(document.getElementById('womenWaist').value) || 0;
+                    const hips = parseFloat(document.getElementById('womenHips').value) || 0;
+                    
+                    if (bust === 0 || waist === 0 || hips === 0) {
+                        alert('请输入完整的测量数据');
+                        return;
+                    }
+                    
+                    // 简单的尺码计算逻辑示例
+                    let topSize, bottomSize;
+                    
+                    // 上装尺码判断
+                    if (bust < 83) {
+                        topSize = 'XS';
+                    } else if (bust >= 83 && bust < 87) {
+                        topSize = 'S';
+                    } else if (bust >= 87 && bust < 91) {
+                        topSize = 'M';
+                    } else if (bust >= 91 && bust < 95) {
+                        topSize = 'L';
+                    } else if (bust >= 95 && bust < 103) {
+                        topSize = 'XL';
+                    } else {
+                        topSize = 'XXL';
+                    }
+                    
+                    // 下装尺码判断 (考虑腰围和臀围的综合)
+                    if (waist < 65 && hips < 90) {
+                        bottomSize = 'XS';
+                    } else if ((waist >= 65 && waist < 69) || (hips >= 90 && hips < 95)) {
+                        bottomSize = 'S';
+                    } else if ((waist >= 69 && waist < 73) || (hips >= 95 && hips < 99)) {
+                        bottomSize = 'M';
+                    } else if ((waist >= 73 && waist < 79) || (hips >= 99 && hips < 103)) {
+                        bottomSize = 'L';
+                    } else if ((waist >= 79 && waist < 85) || (hips >= 103 && hips < 110)) {
+                        bottomSize = 'XL';
+                    } else {
+                        bottomSize = 'XXL';
+                    }
+                    
+                    // 更新结果
+                    document.getElementById('womenTopSize').textContent = topSize;
+                    document.getElementById('womenBottomSize').textContent = bottomSize;
+                });
+            }
+        };
+        
+        // 尺码转换功能
+        const initSizeConverter = () => {
+            const convertBtn = document.getElementById('convertBtn');
+            if (convertBtn) {
+                convertBtn.addEventListener('click', () => {
+                    const fromStandard = document.getElementById('fromSizeStandard').value;
+                    const toStandard = document.getElementById('toSizeStandard').value;
+                    const sizeValue = document.getElementById('fromSizeValue').value.trim();
+                    const type = document.getElementById('convertType').value;
+                    
+                    if (!sizeValue) {
+                        alert('请输入要转换的尺码');
+                        return;
+                    }
+                    
+                    // 简单的演示转换逻辑
+                    let convertedSize = '无法转换';
+                    let details = '未找到匹配的尺码信息';
+                    
+                    // 示例：中国尺码到国际尺码的转换 (仅作演示)
+                    if (fromStandard === 'cn' && toStandard === 'intl' && type === 'tops') {
+                        if (sizeValue === '155/80A') {
+                            convertedSize = 'XS';
+                            details = '适合胸围76-84cm，身高150-160cm的体型。';
+                        } else if (sizeValue === '160/84A') {
+                            convertedSize = 'S';
+                            details = '适合胸围84-88cm，身高155-165cm的体型。';
+                        } else if (sizeValue === '165/88A') {
+                            convertedSize = 'M';
+                            details = '适合胸围88-92cm，身高160-170cm的体型。';
+                        } else if (sizeValue === '170/92A') {
+                            convertedSize = 'L';
+                            details = '适合胸围92-96cm，身高165-175cm的体型。';
+                        }
+                    }
+                    
+                    // 更新结果
+                    document.getElementById('convertedSize').textContent = convertedSize;
+                    document.getElementById('convertedDetails').textContent = details;
+                });
+            }
+            
+            // 显示完整尺码对照表
+            const showTablesBtn = document.getElementById('showTablesBtn');
+            const conversionTables = document.getElementById('conversionTables');
+            if (showTablesBtn && conversionTables) {
+                showTablesBtn.addEventListener('click', () => {
+                    conversionTables.classList.toggle('hidden');
+                    showTablesBtn.innerHTML = conversionTables.classList.contains('hidden') 
+                        ? '<i class="bi bi-eye"></i> 查看完整尺码对照表'
+                        : '<i class="bi bi-eye-slash"></i> 隐藏尺码对照表';
+                });
+            }
+        };
+        
+        // 页面加载完成后初始化所有功能
+        document.addEventListener('DOMContentLoaded', () => {
+            initTabs();
+            initMeasurePoints();
+            initFAQ();
+            initSizeCalculator();
+            initSizeConverter();
+            
+            // 默认展开第一个FAQ
+            const firstFaq = document.querySelector('.faq-item');
+            if (firstFaq) {
+                firstFaq.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html> 
