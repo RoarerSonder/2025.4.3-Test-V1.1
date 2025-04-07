@@ -868,6 +868,79 @@
                 min-width: 200px;
             }
         }
+        
+        /* 添加图片加载错误样式 */
+        .img-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+        }
+        
+        .img-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 添加本地样式 */
+        .local-images-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .local-image-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .local-image-option.selected {
+            border-color: var(--primary-color);
+        }
+        
+        .local-image-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .local-image-tip {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        /* 数据加载和未加载状态 */
+        .data-loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark-gray);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--medium-gray);
+        }
     </style>
 </head>
 <body>
@@ -878,9 +951,9 @@
         <div class="nav-links">
             <a href="index.html">首页</a>
             <a href="#" class="active">穿搭识别</a>
-            <a href="#">图片上传</a>
-            <a href="#">模特模拟</a>
-            <a href="#">尺码指南</a>
+            <a href="image-upload.html">图片上传</a>
+            <a href="model-simulation.html">模特模拟</a>
+            <a href="size-guide.html">尺码指南</a>
         </div>
         
         <div class="user-actions">
@@ -1224,95 +1297,454 @@
     </div>
     
     <script>
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+        // 设置本地默认图片数组
+        const defaultImages = [
+            { 
+                id: 1, 
+                src: 'https://plus.unsplash.com/premium_photo-1683121476753-82d74ca5222f?q=80&w=500',
+                alt: '街头风格穿搭',
+                title: '夏日街头风穿搭分享',
+                description: '今天分享一套适合夏季的街头风穿搭，简约又时尚。上身是经典的白色T恤，下身搭配宽松的卡其色工装裤，脚踩一双白色运动鞋，整体清爽又有型。这套穿搭特别适合日常出街，逛街购物都很合适。面料也都选择了透气舒适的材质，炎热夏季穿着也不会觉得闷热。',
+                source: '小红书',
+                items: [
+                    { type: '上衣', name: '纯棉圆领基础白色T恤', price: '¥89.00', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裤装', name: '多口袋工装直筒裤', price: '¥199.00', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869822?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '基础款白色休闲运动鞋', price: '¥329.00', img: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '配饰', name: '简约帆布单肩斜挎包', price: '¥129.00', img: 'https://images.unsplash.com/photo-1559563458-527698bf5295?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ]
+            },
+            { 
+                id: 2, 
+                src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=500',
+                alt: '韩系穿搭',
+                title: '春季韩系甜美风',
+                description: '春季韩系甜美风穿搭分享，整体色调以粉色和浅蓝为主，上身搭配淡粉色针织衫，下身是高腰浅蓝色牛仔裤，再加上白色小皮鞋，营造出青春甜美的氛围。这套穿搭适合约会、逛街或日常通勤，温柔又不失活力。',
+                source: '小红书',
+                items: [
+                    { type: '上衣', name: '淡粉色圆领针织衫', price: '¥159.00', img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裤装', name: '高腰浅蓝色直筒牛仔裤', price: '¥239.00', img: 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '复古玛丽珍小皮鞋', price: '¥299.00', img: 'https://images.unsplash.com/photo-1585232351745-400e025207ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ]
+            },
+            { 
+                id: 3, 
+                src: 'https://images.unsplash.com/photo-1571445556382-4f5fd6fe15e0?q=80&w=500',
+                alt: '秋季复古风',
+                title: '秋季复古学院风搭配',
+                description: '秋季复古学院风搭配，上身是一件棕色格纹毛呢外套，内搭米色高领毛衣，下身搭配深棕色直筒半裙，再加上一双黑色小皮鞋和复古手提包，整体营造出温暖又知性的氛围。非常适合秋季上课或工作穿着，在保暖的同时兼顾时尚感。',
+                source: '抖音',
+                items: [
+                    { type: '外套', name: '复古格纹毛呢外套', price: '¥399.00', img: 'https://images.unsplash.com/photo-1592878897400-43fb1f1cc324?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '上衣', name: '纯色高领针织衫', price: '¥189.00', img: 'https://images.unsplash.com/photo-1581497396202-5645e76a3a8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裙装', name: '复古A字半身裙', price: '¥259.00', img: 'https://images.unsplash.com/photo-1577900232427-18219b9166a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '复古英伦小皮鞋', price: '¥349.00', img: 'https://images.unsplash.com/photo-1601924582970-9238bcb495d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '配饰', name: '复古手提公文包', price: '¥289.00', img: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ]
             }
-        });
+        ];
         
-        // 平台选择
-        const platformOptions = document.querySelectorAll('.platform-option');
-        platformOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                platformOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // 链接分析功能
-        const linkInput = document.getElementById('linkInput');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const loaderContainer = document.getElementById('loaderContainer');
-        const analysisResults = document.getElementById('analysisResults');
-        
-        analyzeBtn.addEventListener('click', function() {
-            if (linkInput.value.trim() === '') {
-                alert('请输入链接进行分析');
-                return;
-            }
-            
-            // 显示加载动画
-            loaderContainer.style.display = 'flex';
-            
-            // 模拟API请求延迟
-            setTimeout(() => {
-                // 隐藏加载动画
-                loaderContainer.style.display = 'none';
-                
-                // 显示分析结果
-                analysisResults.classList.add('show');
-                
-                // 滚动到结果区域
-                analysisResults.scrollIntoView({behavior: 'smooth'});
-            }, 2000);
-        });
-        
-        // 相似穿搭滑块控制
-        const similarOutfitsSlider = document.getElementById('similarOutfitsSlider');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        prevBtn.addEventListener('click', function() {
-            similarOutfitsSlider.scrollBy({
-                left: -300,
-                behavior: 'smooth'
-            });
-        });
-        
-        nextBtn.addEventListener('click', function() {
-            similarOutfitsSlider.scrollBy({
-                left: 300,
-                behavior: 'smooth'
-            });
-        });
-        
-        // 模特选择功能
-        const modelOptions = document.querySelectorAll('.model-option');
-        const modelPreview = document.getElementById('modelPreview');
-        
-        modelOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                modelOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 在真实应用中，这里会根据选择的模特和识别的穿搭生成模拟图片
-                // 这里仅用于演示
-                const modelSrc = this.querySelector('img').src;
-                if (modelSrc.includes('male')) {
-                    modelPreview.src = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80";
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
                 } else {
-                    modelPreview.src = "https://images.unsplash.com/photo-1507114845806-0347f6150324?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80";
+                    navbar.classList.remove('scrolled');
                 }
             });
+            
+            // 平台选择
+            const platformOptions = document.querySelectorAll('.platform-option');
+            platformOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    platformOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 保存用户平台选择
+                    if (window.saveUserPreference) {
+                        saveUserPreference('selectedPlatform', this.getAttribute('data-platform'));
+                    }
+                });
+            });
+            
+            // 图片错误处理函数
+            function handleImageError(img) {
+                // 创建占位符元素
+                const placeholder = document.createElement('div');
+                placeholder.className = 'img-placeholder';
+                placeholder.innerHTML = '<i class="bi bi-image"></i><div>图片加载失败</div>';
+                
+                // 替换图片
+                img.parentNode.replaceChild(placeholder, img);
+            }
+            
+            // 处理所有图片加载错误
+            document.querySelectorAll('img').forEach(img => {
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
+                
+                // 检查当前是否已加载失败
+                if (img.complete && img.naturalHeight === 0) {
+                    handleImageError(img);
+                }
+            });
+            
+            // 添加本地图片选择区
+            const linkInputSection = document.querySelector('.link-input-section');
+            if (linkInputSection) {
+                const localImagesContainer = document.createElement('div');
+                localImagesContainer.className = 'local-images-container';
+                localImagesContainer.innerHTML = '<p style="width:100%; margin-bottom:0.5rem;">或选择示例图片：</p>';
+                
+                // 添加默认图片选项
+                defaultImages.forEach(img => {
+                    const imgOption = document.createElement('div');
+                    imgOption.className = 'local-image-option';
+                    imgOption.setAttribute('data-id', img.id);
+                    imgOption.innerHTML = `<img src="${img.src}" alt="${img.alt}">`;
+                    localImagesContainer.appendChild(imgOption);
+                    
+                    // 点击选择图片事件
+                    imgOption.addEventListener('click', function() {
+                        document.querySelectorAll('.local-image-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        // 自动填充对应的示例链接
+                        document.getElementById('linkInput').value = `https://example.com/outfit/${img.id}`;
+                        
+                        // 保存用户选择
+                        if (window.saveUserPreference) {
+                            saveUserPreference('selectedExampleImage', img.id);
+                        }
+                    });
+                });
+                
+                // 添加提示信息
+                const tipElement = document.createElement('p');
+                tipElement.className = 'local-image-tip';
+                tipElement.innerHTML = '点击示例图片可自动填充模拟链接';
+                
+                // 插入到链接输入区域底部
+                linkInputSection.appendChild(localImagesContainer);
+                linkInputSection.appendChild(tipElement);
+            }
+            
+            // 链接分析功能
+            const linkInput = document.getElementById('linkInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loaderContainer = document.getElementById('loaderContainer');
+            const analysisResults = document.getElementById('analysisResults');
+            
+            analyzeBtn.addEventListener('click', function() {
+                if (linkInput.value.trim() === '') {
+                    alert('请输入链接进行分析');
+                    return;
+                }
+                
+                // 显示加载动画
+                loaderContainer.style.display = 'flex';
+                
+                // 根据输入的链接获取数据
+                let selectedData = null;
+                
+                // 尝试从链接中提取ID
+                const linkValue = linkInput.value.trim();
+                const idMatch = linkValue.match(/\/outfit\/(\d+)$/);
+                
+                if (idMatch && idMatch[1]) {
+                    const imgId = parseInt(idMatch[1]);
+                    selectedData = defaultImages.find(img => img.id === imgId);
+                } 
+                
+                // 如果没有找到匹配的数据，使用第一个默认图片
+                if (!selectedData) {
+                    // 随机选择一个默认图片
+                    const randomIndex = Math.floor(Math.random() * defaultImages.length);
+                    selectedData = defaultImages[randomIndex];
+                }
+                
+                // 模拟API请求延迟
+                setTimeout(() => {
+                    // 隐藏加载动画
+                    loaderContainer.style.display = 'none';
+                    
+                    // 更新分析结果内容
+                    updateAnalysisResult(selectedData);
+                    
+                    // 显示分析结果
+                    analysisResults.classList.add('show');
+                    
+                    // 滚动到结果区域
+                    analysisResults.scrollIntoView({behavior: 'smooth'});
+                    
+                    // 记录分析历史
+                    if (window.recordAnalysisHistory) {
+                        recordAnalysisHistory(linkValue, selectedData);
+                    }
+                }, 2000);
+            });
+            
+            // 更新分析结果
+            function updateAnalysisResult(data) {
+                // 更新原始内容
+                document.getElementById('originalImage').src = data.src;
+                document.getElementById('originalImage').alt = data.alt;
+                document.getElementById('contentTitle').textContent = data.title;
+                document.getElementById('contentSource').textContent = data.source;
+                document.getElementById('contentDescription').textContent = data.description;
+                
+                // 更新识别单品
+                const outfitItemsContainer = document.querySelector('.outfit-items');
+                if (outfitItemsContainer) {
+                    outfitItemsContainer.innerHTML = '';
+                    
+                    data.items.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'outfit-item';
+                        itemElement.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.img}" alt="${item.name}" onerror="this.parentNode.innerHTML='<div class=\\'img-placeholder\\'><i class=\\'bi bi-image\\'></i><div>图片加载失败</div></div>'">
+                            </div>
+                            <div class="item-info">
+                                <h4 class="item-name">${item.name}</h4>
+                                <p class="item-category">${item.type}</p>
+                                <p class="item-price">${item.price}</p>
+                                <div class="item-actions">
+                                    <button class="item-like"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-buy"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        `;
+                        outfitItemsContainer.appendChild(itemElement);
+                    });
+                    
+                    // 为新添加的按钮绑定事件
+                    document.querySelectorAll('.item-like').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const icon = this.querySelector('i');
+                            icon.classList.toggle('bi-heart');
+                            icon.classList.toggle('bi-heart-fill');
+                            
+                            if (icon.classList.contains('bi-heart-fill')) {
+                                icon.style.color = '#ff4757';
+                                this.textContent = ' 已收藏';
+                                this.prepend(icon);
+                            } else {
+                                icon.style.color = '';
+                                this.textContent = ' 收藏';
+                                this.prepend(icon);
+                            }
+                            
+                            const itemName = this.closest('.item-info').querySelector('.item-name').textContent;
+                            const itemPrice = this.closest('.item-info').querySelector('.item-price').textContent;
+                            
+                            // 使用IndexedDB保存收藏记录
+                            if (window.saveUserFavorite && icon.classList.contains('bi-heart-fill')) {
+                                saveUserFavorite('item', {
+                                    name: itemName,
+                                    price: itemPrice,
+                                    type: this.closest('.item-info').querySelector('.item-category').textContent,
+                                    source: data.title
+                                });
+                            }
+                        });
+                    });
+                    
+                    document.querySelectorAll('.item-buy').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const itemName = this.closest('.item-info').querySelector('.item-name').textContent;
+                            alert(`购买功能正在开发中，您选择的是: ${itemName}`);
+                        });
+                    });
+                }
+                
+                // 更新模特预览图
+                const modelPreview = document.getElementById('modelPreview');
+                if (modelPreview) {
+                    modelPreview.src = data.src;
+                }
+            }
+            
+            // 相似穿搭滑块控制
+            const similarOutfitsSlider = document.getElementById('similarOutfitsSlider');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (similarOutfitsSlider && prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', function() {
+                    similarOutfitsSlider.scrollBy({
+                        left: -300,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                nextBtn.addEventListener('click', function() {
+                    similarOutfitsSlider.scrollBy({
+                        left: 300,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // 模特选择功能
+            const modelOptions = document.querySelectorAll('.model-option');
+            const modelPreview = document.getElementById('modelPreview');
+            
+            modelOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    modelOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 在实际应用中，这里会根据选择的模特和识别的穿搭生成模拟图片
+                    // 这里仅调整预览图片
+                    if (modelPreview) {
+                        const currentSrc = modelPreview.src;
+                        // 保持当前图片但添加时间戳使图片"刷新"
+                        modelPreview.src = currentSrc.split('?')[0] + '?t=' + new Date().getTime();
+                    }
+                    
+                    // 保存用户选择
+                    if (window.saveUserPreference) {
+                        saveUserPreference('selectedModel', this.getAttribute('data-model'));
+                    }
+                });
+            });
+            
+            // 记录分析历史函数
+            window.recordAnalysisHistory = function(link, data) {
+                if (!window.db) return;
+                
+                const transaction = db.transaction(['analysisHistory'], 'readwrite');
+                const store = transaction.objectStore('analysisHistory');
+                
+                const historyItem = {
+                    link: link,
+                    title: data.title,
+                    image: data.src,
+                    source: data.source,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.add(historyItem);
+            };
+            
+            // 保存用户收藏
+            window.saveUserFavorite = function(type, data) {
+                if (!window.db) return;
+                
+                const transaction = db.transaction(['favorites'], 'readwrite');
+                const store = transaction.objectStore('favorites');
+                
+                const favorite = {
+                    ...data,
+                    type: type,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.add(favorite);
+                console.log(`收藏已保存: ${data.name}`);
+            };
+            
+            // 初始化IndexedDB数据库
+            function initAnalysisDB() {
+                return new Promise((resolve, reject) => {
+                    if (window.db) {
+                        resolve(window.db);
+                        return;
+                    }
+                    
+                    const dbName = 'fashionAIDB';
+                    const dbVersion = 1;
+                    const request = indexedDB.open(dbName, dbVersion);
+                    
+                    request.onerror = function(event) {
+                        console.error("数据库错误: ", event.target.error);
+                        reject("无法打开数据库");
+                    };
+                    
+                    request.onsuccess = function(event) {
+                        window.db = event.target.result;
+                        console.log("数据库连接成功");
+                        resolve(window.db);
+                    };
+                    
+                    request.onupgradeneeded = function(event) {
+                        const db = event.target.result;
+                        
+                        // 创建分析历史存储
+                        if (!db.objectStoreNames.contains('analysisHistory')) {
+                            const store = db.createObjectStore('analysisHistory', { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('timestamp', 'timestamp', { unique: false });
+                            console.log("创建analysisHistory存储");
+                        }
+                        
+                        // 检查并创建其他需要的存储
+                        if (!db.objectStoreNames.contains('favorites')) {
+                            const store = db.createObjectStore('favorites', { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('type', 'type', { unique: false });
+                            store.createIndex('timestamp', 'timestamp', { unique: false });
+                            console.log("创建favorites存储");
+                        }
+                        
+                        if (!db.objectStoreNames.contains('userPreferences')) {
+                            const store = db.createObjectStore('userPreferences', { keyPath: 'id' });
+                            console.log("创建userPreferences存储");
+                        }
+                    };
+                });
+            }
+            
+            // 保存用户偏好
+            window.saveUserPreference = function(key, value) {
+                if (!window.db) {
+                    initAnalysisDB().then(() => _saveUserPreference(key, value))
+                        .catch(err => console.error("保存用户偏好失败: ", err));
+                } else {
+                    _saveUserPreference(key, value);
+                }
+            };
+            
+            function _saveUserPreference(key, value) {
+                const transaction = window.db.transaction(['userPreferences'], 'readwrite');
+                const store = transaction.objectStore('userPreferences');
+                
+                const preference = {
+                    id: key,
+                    value: value,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.put(preference);
+            }
+            
+            // 初始化数据库
+            initAnalysisDB().then(() => {
+                console.log("分析页面数据库初始化完成");
+            }).catch(err => {
+                console.error("初始化数据库失败: ", err);
+            });
+            
+            // 根据URL参数加载示例
+            function loadFromUrlParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const exampleId = urlParams.get('example');
+                
+                if (exampleId) {
+                    const numId = parseInt(exampleId);
+                    const exampleOption = document.querySelector(`.local-image-option[data-id="${numId}"]`);
+                    if (exampleOption) {
+                        exampleOption.click();
+                        // 自动分析
+                        analyzeBtn.click();
+                    }
+                }
+            }
+            
+            // 加载URL参数
+            loadFromUrlParams();
         });
-        
-        // 为演示目的，默认显示结果
-        // 实际应用中应该在链接分析完成后才显示结果
-        // analysisResults.classList.add('show');
     </script>
 </body>
 </html> 

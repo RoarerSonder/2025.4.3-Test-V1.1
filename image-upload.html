@@ -1130,176 +1130,769 @@
     </div>
     
     <script>
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+        // 设置示例穿搭图片数组
+        const sampleImages = [
+            {
+                id: 1,
+                src: 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
+                alt: '北欧简约穿搭',
+                style: '北欧简约',
+                items: [
+                    { type: '上衣', name: '灰色纯棉针织毛衣', price: '¥189.00', img: 'https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裤装', name: '高腰直筒牛仔裤', price: '¥239.00', img: 'https://images.unsplash.com/photo-1582418702059-97ebafb35d09?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '复古厚底马丁靴', price: '¥329.00', img: 'https://images.unsplash.com/photo-1609409612178-8036e8064138?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '配饰', name: '羊毛贝雷帽', price: '¥89.00', img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ],
+                matches: [
+                    { src: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '北欧文艺通勤风', similarity: 92 },
+                    { src: 'https://images.unsplash.com/photo-1544962850-8df6b215a231?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '简约ins街拍风格', similarity: 88 },
+                    { src: 'https://images.unsplash.com/photo-1608234807905-4466023792f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '灰色系日常穿搭', similarity: 85 }
+                ]
+            },
+            {
+                id: 2,
+                src: 'https://images.unsplash.com/photo-1542834759-0ea3102ad10e?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
+                alt: '春季田园风',
+                style: '田园复古',
+                items: [
+                    { type: '上衣', name: '白色蕾丝衬衫', price: '¥149.00', img: 'https://images.unsplash.com/photo-1572567886085-eaf7ecb33349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裙装', name: '高腰碎花半身裙', price: '¥199.00', img: 'https://images.unsplash.com/photo-1580651315530-69c8e0026377?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '复古绑带玛丽珍鞋', price: '¥259.00', img: 'https://images.unsplash.com/photo-1519415943484-9fa1873496d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '配饰', name: '藤编草帽', price: '¥89.00', img: 'https://images.unsplash.com/photo-1658934546590-bb5cd171e1da?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ],
+                matches: [
+                    { src: 'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '春日田园风穿搭', similarity: 95 },
+                    { src: 'https://images.unsplash.com/photo-1602271456860-e79aa8d2fc73?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '复古文艺小清新', similarity: 89 },
+                    { src: 'https://images.unsplash.com/photo-1554127701-da9ca4144a0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '法式复古搭配', similarity: 86 }
+                ]
+            },
+            {
+                id: 3,
+                src: 'https://images.unsplash.com/photo-1550614000-4895a10e1bfd?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
+                alt: '街头嘻哈风',
+                style: '街头嘻哈',
+                items: [
+                    { type: '上衣', name: '印花宽松卫衣', price: '¥269.00', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '裤装', name: '宽松工装裤', price: '¥219.00', img: 'https://images.unsplash.com/photo-1569617084133-26942bb441f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '鞋履', name: '高帮街头滑板鞋', price: '¥369.00', img: 'https://images.unsplash.com/photo-1597248881519-d54a14adb0f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+                    { type: '配饰', name: '潮流棒球帽', price: '¥79.00', img: 'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+                ],
+                matches: [
+                    { src: 'https://images.unsplash.com/photo-1591810608582-413a8c3d72c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '街头滑板风穿搭', similarity: 93 },
+                    { src: 'https://images.unsplash.com/photo-1580657018950-c7f7d6a6d990?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '嘻哈街头风格', similarity: 90 },
+                    { src: 'https://images.unsplash.com/photo-1543584756-31503cd0f6e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', title: '城市潮流搭配', similarity: 87 }
+                ]
             }
-        });
-        
-        // 上传区域交互
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const uploadActions = document.getElementById('uploadActions');
-        const resetBtn = document.getElementById('resetBtn');
-        const rotateBtn = document.getElementById('rotateBtn');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const loaderContainer = document.getElementById('loaderContainer');
-        const analysisResults = document.getElementById('analysisResults');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        
-        // 点击上传区域触发文件选择
-        uploadArea.addEventListener('click', function() {
-            fileInput.click();
-        });
-        
-        // 拖拽文件上传效果
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', function() {
-            this.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
+        ];
+
+        // 图片加载失败处理函数
+        function handleImageError(img) {
+            // 获取图片尺寸
+            const width = img.width || 200;
+            const height = img.height || 200;
             
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                handleFileSelect();
-            }
-        });
-        
-        // 选择文件后的处理
-        fileInput.addEventListener('change', handleFileSelect);
-        
-        function handleFileSelect() {
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
+            // 创建占位符
+            const placeholder = document.createElement('div');
+            placeholder.className = 'img-placeholder';
+            placeholder.style.width = width + 'px';
+            placeholder.style.height = height + 'px';
+            placeholder.style.display = 'flex';
+            placeholder.style.flexDirection = 'column';
+            placeholder.style.alignItems = 'center';
+            placeholder.style.justifyContent = 'center';
+            placeholder.style.backgroundColor = '#f5f5f5';
+            placeholder.style.color = '#666';
+            placeholder.style.borderRadius = '8px';
+            
+            // 添加图标和文本
+            placeholder.innerHTML = '<i class="bi bi-image" style="font-size: 2rem; margin-bottom: 0.5rem;"></i><div>图片加载失败</div>';
+            
+            // 替换原图片
+            img.parentNode.replaceChild(placeholder, img);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 处理图片加载错误
+            document.querySelectorAll('img').forEach(img => {
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
                 
-                // 检查文件类型和大小
-                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                const maxSize = 10 * 1024 * 1024; // 10MB
-                
-                if (!validTypes.includes(file.type)) {
-                    alert('请上传JPG、PNG或WEBP格式的图片');
-                    return;
+                // 检查当前是否已加载失败
+                if (img.complete && img.naturalHeight === 0) {
+                    handleImageError(img);
+                }
+            });
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // 获取上传区域相关元素
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const imagePreview = document.getElementById('imagePreview');
+            const uploadActions = document.getElementById('uploadActions');
+            const resetBtn = document.getElementById('resetBtn');
+            const rotateBtn = document.getElementById('rotateBtn');
+            const cropBtn = document.getElementById('cropBtn');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loaderContainer = document.getElementById('loaderContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const analysisResults = document.getElementById('analysisResults');
+            
+            // 添加示例图片选择区域
+            const examplesContainer = document.createElement('div');
+            examplesContainer.className = 'examples-container';
+            examplesContainer.innerHTML = `
+                <div class="examples-header">
+                    <h3>或选择以下示例图片</h3>
+                </div>
+                <div class="examples-grid"></div>
+            `;
+            
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .examples-container {
+                    margin-top: 2rem;
+                    border-top: 1px solid var(--medium-gray);
+                    padding-top: 1rem;
                 }
                 
-                if (file.size > maxSize) {
-                    alert('图片大小不能超过10MB');
-                    return;
+                .examples-header {
+                    margin-bottom: 1rem;
                 }
                 
-                // 预览图片
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
+                .examples-header h3 {
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    color: var(--dark-gray);
+                }
+                
+                .examples-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                    gap: 1rem;
+                }
+                
+                .example-item {
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .example-item:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+                }
+                
+                .example-img {
+                    width: 100%;
+                    height: 180px;
+                    object-fit: cover;
+                }
+                
+                .example-info {
+                    padding: 0.8rem;
+                    background-color: white;
+                }
+                
+                .example-title {
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                    margin-bottom: 0.3rem;
+                }
+                
+                .example-style {
+                    font-size: 0.8rem;
+                    color: var(--primary-color);
+                }
+                
+                .img-placeholder {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 100%;
+                    background-color: var(--light-gray);
+                    color: var(--dark-gray);
+                    font-size: 1rem;
+                    flex-direction: column;
+                }
+                
+                .img-placeholder i {
+                    font-size: 2rem;
+                    margin-bottom: 0.5rem;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 插入示例图片
+            const examplesGrid = examplesContainer.querySelector('.examples-grid');
+            sampleImages.forEach(sample => {
+                const exampleItem = document.createElement('div');
+                exampleItem.className = 'example-item';
+                exampleItem.setAttribute('data-id', sample.id);
+                exampleItem.innerHTML = `
+                    <img class="example-img" src="${sample.src}" alt="${sample.alt}">
+                    <div class="example-info">
+                        <div class="example-title">${sample.alt}</div>
+                        <div class="example-style">${sample.style}</div>
+                    </div>
+                `;
+                examplesGrid.appendChild(exampleItem);
+                
+                // 点击示例图片的事件
+                exampleItem.addEventListener('click', function() {
+                    // 显示图片预览
+                    imagePreview.src = sample.src;
                     imagePreview.style.display = 'block';
-                    uploadArea.classList.add('has-image');
-                    uploadActions.style.display = 'block';
+                    imagePreview.setAttribute('data-sample-id', sample.id);
                     
-                    // 隐藏上传区域的其他元素
+                    // 显示操作按钮
+                    uploadActions.style.display = 'flex';
+                    
+                    // 改变上传区域的样式
+                    uploadArea.classList.add('has-image');
+                    
+                    // 隐藏上传提示
                     const uploadIcon = uploadArea.querySelector('.upload-icon');
                     const uploadText = uploadArea.querySelector('.upload-text');
                     const uploadSubtext = uploadArea.querySelector('.upload-subtext');
                     const uploadBtn = uploadArea.querySelector('.upload-btn');
                     
-                    uploadIcon.style.display = 'none';
-                    uploadText.style.display = 'none';
-                    uploadSubtext.style.display = 'none';
-                    uploadBtn.style.display = 'none';
+                    if (uploadIcon) uploadIcon.style.display = 'none';
+                    if (uploadText) uploadText.style.display = 'none';
+                    if (uploadSubtext) uploadSubtext.style.display = 'none';
+                    if (uploadBtn) uploadBtn.style.display = 'none';
+                    
+                    // 保存选择记录
+                    if (window.saveUserPreference) {
+                        saveUserPreference('lastSelectedExample', sample.id);
+                    }
+                });
+            });
+            
+            // 将示例容器添加到上传区域后面
+            uploadArea.parentNode.insertBefore(examplesContainer, uploadArea.nextSibling);
+            
+            // 处理拖放上传
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            uploadArea.addEventListener('dragenter', function() {
+                uploadArea.classList.add('highlight');
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('highlight');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                uploadArea.classList.remove('highlight');
+                const files = e.dataTransfer.files;
+                if (files.length) {
+                    handleFiles(files);
+                }
+            });
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFiles(this.files);
+                }
+            });
+            
+            // 点击上传区域触发文件选择
+            uploadArea.querySelector('.upload-btn').addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // 文件处理函数
+            function handleFiles(files) {
+                const file = files[0];
+                if (!file.type.match('image.*')) {
+                    alert('请选择图片文件');
+                    return;
+                }
+                
+                // 文件大小限制（10MB）
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('图片大小不能超过10MB');
+                    return;
+                }
+                
+                // 创建FileReader读取图片
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 显示图片预览
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePreview.removeAttribute('data-sample-id');
+                    
+                    // 显示操作按钮
+                    uploadActions.style.display = 'flex';
+                    
+                    // 改变上传区域的样式
+                    uploadArea.classList.add('has-image');
+                    
+                    // 隐藏上传提示
+                    const uploadIcon = uploadArea.querySelector('.upload-icon');
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    const uploadSubtext = uploadArea.querySelector('.upload-subtext');
+                    const uploadBtn = uploadArea.querySelector('.upload-btn');
+                    
+                    if (uploadIcon) uploadIcon.style.display = 'none';
+                    if (uploadText) uploadText.style.display = 'none';
+                    if (uploadSubtext) uploadSubtext.style.display = 'none';
+                    if (uploadBtn) uploadBtn.style.display = 'none';
                 };
+                
                 reader.readAsDataURL(file);
             }
-        }
-        
-        // 重置按钮
-        resetBtn.addEventListener('click', function() {
-            imagePreview.src = '';
-            imagePreview.style.display = 'none';
-            uploadArea.classList.remove('has-image');
-            uploadActions.style.display = 'none';
-            fileInput.value = '';
             
-            // 恢复上传区域的原始元素
-            const uploadIcon = uploadArea.querySelector('.upload-icon');
-            const uploadText = uploadArea.querySelector('.upload-text');
-            const uploadSubtext = uploadArea.querySelector('.upload-subtext');
-            const uploadBtn = uploadArea.querySelector('.upload-btn');
+            // 重置按钮
+            resetBtn.addEventListener('click', function() {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+                imagePreview.style.transform = 'rotate(0deg)';
+                imagePreview.removeAttribute('data-sample-id');
+                
+                uploadActions.style.display = 'none';
+                uploadArea.classList.remove('has-image');
+                
+                // 显示上传提示
+                const uploadIcon = uploadArea.querySelector('.upload-icon');
+                const uploadText = uploadArea.querySelector('.upload-text');
+                const uploadSubtext = uploadArea.querySelector('.upload-subtext');
+                const uploadBtn = uploadArea.querySelector('.upload-btn');
+                
+                if (uploadIcon) uploadIcon.style.display = 'block';
+                if (uploadText) uploadText.style.display = 'block';
+                if (uploadSubtext) uploadSubtext.style.display = 'block';
+                if (uploadBtn) uploadBtn.style.display = 'block';
+                
+                // 重置文件输入
+                fileInput.value = '';
+                
+                // 隐藏分析结果
+                analysisResults.classList.remove('show');
+            });
             
-            uploadIcon.style.display = 'block';
-            uploadText.style.display = 'block';
-            uploadSubtext.style.display = 'block';
-            uploadBtn.style.display = 'inline-block';
+            // 旋转功能
+            let rotationAngle = 0;
+            rotateBtn.addEventListener('click', function() {
+                rotationAngle = (rotationAngle + 90) % 360;
+                imagePreview.style.transform = `rotate(${rotationAngle}deg)`;
+            });
             
-            // 旋转角度重置
-            imagePreview.style.transform = 'rotate(0deg)';
-            rotationAngle = 0;
-        });
-        
-        // 旋转按钮
-        let rotationAngle = 0;
-        rotateBtn.addEventListener('click', function() {
-            rotationAngle = (rotationAngle + 90) % 360;
-            imagePreview.style.transform = `rotate(${rotationAngle}deg)`;
-        });
-        
-        // 分析按钮
-        analyzeBtn.addEventListener('click', function() {
-            if (!imagePreview.src) {
-                alert('请先上传图片');
-                return;
+            // 裁剪按钮 (模拟功能)
+            cropBtn.addEventListener('click', function() {
+                alert('裁剪功能正在开发中，敬请期待！');
+            });
+            
+            // 分析按钮
+            analyzeBtn.addEventListener('click', function() {
+                if (!imagePreview.src) {
+                    alert('请先上传图片');
+                    return;
+                }
+                
+                // 显示加载动画
+                loaderContainer.style.display = 'flex';
+                
+                // 获取分析数据
+                let sampleData = null;
+                const sampleId = imagePreview.getAttribute('data-sample-id');
+                
+                if (sampleId) {
+                    // 使用示例数据
+                    sampleData = sampleImages.find(sample => sample.id == sampleId);
+                } else {
+                    // 用户上传的图片，随机选择一个示例数据
+                    const randomIndex = Math.floor(Math.random() * sampleImages.length);
+                    sampleData = sampleImages[randomIndex];
+                }
+                
+                // 模拟进度
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 5;
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        
+                        // 延迟显示结果，模拟分析完成
+                        setTimeout(() => {
+                            loaderContainer.style.display = 'none';
+                            
+                            // 更新分析结果
+                            updateAnalysisResults(sampleData);
+                            
+                            // 显示结果
+                            analysisResults.classList.add('show');
+                            analysisResults.scrollIntoView({ behavior: 'smooth' });
+                            
+                            // 记录分析历史
+                            if (window.recordAnalysisHistory) {
+                                recordAnalysisHistory(imagePreview.src, sampleData);
+                            }
+                        }, 500);
+                    }
+                }, 100);
+            });
+            
+            // 更新分析结果
+            function updateAnalysisResults(data) {
+                // 更新上传图片
+                const resultImage = document.getElementById('resultImage');
+                if (resultImage) {
+                    resultImage.src = imagePreview.src;
+                }
+                
+                // 更新风格标签
+                const styleTags = document.querySelector('.style-tags');
+                if (styleTags) {
+                    const tags = data.style.split(' ');
+                    let tagsHtml = '';
+                    
+                    // 添加主要风格
+                    tagsHtml += `<span class="style-tag">${data.style}</span>`;
+                    
+                    // 添加随机补充标签
+                    const additionalTags = ['休闲', '秋冬', '学院风', '日常', '通勤', '约会', '简约', '复古'];
+                    const shuffled = [...additionalTags].sort(() => 0.5 - Math.random());
+                    const selected = shuffled.slice(0, 3);
+                    
+                    selected.forEach(tag => {
+                        tagsHtml += `<span class="style-tag">${tag}</span>`;
+                    });
+                    
+                    styleTags.innerHTML = tagsHtml;
+                }
+                
+                // 更新识别单品
+                const itemsList = document.querySelector('.items-list');
+                if (itemsList && data.items) {
+                    itemsList.innerHTML = '';
+                    
+                    data.items.forEach(item => {
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'item-card';
+                        itemCard.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.img}" alt="${item.name}" onerror="handleImageError(this)">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-name">${item.name}</h4>
+                                <p class="item-category">${item.type}</p>
+                                <p class="item-price">${item.price}</p>
+                                <div class="item-actions">
+                                    <button class="item-btn item-like"><i class="bi bi-heart"></i> 收藏</button>
+                                    <button class="item-btn item-buy"><i class="bi bi-bag"></i> 购买</button>
+                                </div>
+                            </div>
+                        `;
+                        itemsList.appendChild(itemCard);
+                    });
+                    
+                    // 绑定新按钮事件
+                    document.querySelectorAll('.item-like').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const icon = this.querySelector('i');
+                            icon.classList.toggle('bi-heart');
+                            icon.classList.toggle('bi-heart-fill');
+                            
+                            if (icon.classList.contains('bi-heart-fill')) {
+                                icon.style.color = '#ff4757';
+                                this.innerHTML = '<i class="bi bi-heart-fill" style="color: #ff4757;"></i> 已收藏';
+                            } else {
+                                icon.style.color = '';
+                                this.innerHTML = '<i class="bi bi-heart"></i> 收藏';
+                            }
+                            
+                            // 保存收藏
+                            if (window.saveUserFavorite && icon.classList.contains('bi-heart-fill')) {
+                                const itemCard = this.closest('.item-card');
+                                const itemName = itemCard.querySelector('.item-name').textContent;
+                                const itemCategory = itemCard.querySelector('.item-category').textContent;
+                                const itemPrice = itemCard.querySelector('.item-price').textContent;
+                                
+                                saveUserFavorite('item', {
+                                    name: itemName,
+                                    type: itemCategory,
+                                    price: itemPrice,
+                                    source: 'image_upload'
+                                });
+                            }
+                        });
+                    });
+                    
+                    document.querySelectorAll('.item-buy').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const itemName = this.closest('.item-details').querySelector('.item-name').textContent;
+                            alert(`购买功能正在开发中，您选择的是: ${itemName}`);
+                        });
+                    });
+                }
+                
+                // 更新相似推荐
+                const similarSlider = document.getElementById('similarSlider');
+                if (similarSlider && data.matches) {
+                    similarSlider.innerHTML = '';
+                    
+                    data.matches.forEach(match => {
+                        const similarItem = document.createElement('div');
+                        similarItem.className = 'similar-item';
+                        similarItem.innerHTML = `
+                            <div class="similar-image">
+                                <img src="${match.src}" alt="${match.title}" onerror="handleImageError(this)">
+                            </div>
+                            <div class="similar-info">
+                                <h4 class="similar-title">${match.title}</h4>
+                                <div class="similar-match">
+                                    <span class="match-value">${match.similarity}% 匹配</span>
+                                    <div class="match-bar">
+                                        <div class="match-fill" style="width: ${match.similarity}%"></div>
+                                    </div>
+                                </div>
+                                <button class="similar-btn"><i class="bi bi-eye"></i> 查看详情</button>
+                            </div>
+                        `;
+                        similarSlider.appendChild(similarItem);
+                    });
+                    
+                    // 绑定查看详情按钮事件
+                    document.querySelectorAll('.similar-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const title = this.closest('.similar-info').querySelector('.similar-title').textContent;
+                            alert(`${title} 详情页面正在开发中，敬请期待！`);
+                        });
+                    });
+                }
             }
             
-            // 显示加载动画
-            loaderContainer.style.display = 'flex';
+            // 相似推荐滑块控制
+            const similarSlider = document.getElementById('similarSlider');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
             
-            // 模拟进度
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 5;
-                progressFill.style.width = `${progress}%`;
-                progressText.textContent = `${progress}%`;
+            prevBtn.addEventListener('click', function() {
+                similarSlider.scrollBy({
+                    left: -300,
+                    behavior: 'smooth'
+                });
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                similarSlider.scrollBy({
+                    left: 300,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 记录分析历史
+            window.recordAnalysisHistory = function(imageSrc, data) {
+                if (!window.db) return;
                 
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    
-                    // 延迟显示结果，模拟分析完成
-                    setTimeout(() => {
-                        loaderContainer.style.display = 'none';
-                        analysisResults.classList.add('show');
-                        analysisResults.scrollIntoView({ behavior: 'smooth' });
-                    }, 500);
+                const transaction = db.transaction(['imageAnalysisHistory'], 'readwrite');
+                const store = transaction.objectStore('imageAnalysisHistory');
+                
+                // 因为图片数据可能较大，只存储示例ID或URL
+                let imageRef = imageSrc;
+                if (data.id) {
+                    imageRef = `sample_${data.id}`;
                 }
-            }, 100);
-        });
-        
-        // 相似推荐滑块控制
-        const similarSlider = document.getElementById('similarSlider');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        prevBtn.addEventListener('click', function() {
-            similarSlider.scrollBy({
-                left: -300,
-                behavior: 'smooth'
+                
+                const historyItem = {
+                    imageRef: imageRef,
+                    style: data.style,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.add(historyItem);
+            };
+            
+            // 保存用户收藏
+            window.saveUserFavorite = function(type, data) {
+                if (!window.db) return;
+                
+                const transaction = db.transaction(['favorites'], 'readwrite');
+                const store = transaction.objectStore('favorites');
+                
+                const favorite = {
+                    ...data,
+                    type: type,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.add(favorite);
+                console.log(`收藏已保存: ${data.name}`);
+            };
+            
+            // 保存用户偏好
+            window.saveUserPreference = function(key, value) {
+                if (!window.db) {
+                    initImageDB().then(() => _saveUserPreference(key, value))
+                        .catch(err => console.error("保存用户偏好失败: ", err));
+                } else {
+                    _saveUserPreference(key, value);
+                }
+            };
+            
+            function _saveUserPreference(key, value) {
+                const transaction = window.db.transaction(['userPreferences'], 'readwrite');
+                const store = transaction.objectStore('userPreferences');
+                
+                const preference = {
+                    id: key,
+                    value: value,
+                    timestamp: new Date().getTime()
+                };
+                
+                store.put(preference);
+            }
+            
+            // 初始化IndexedDB数据库
+            function initImageDB() {
+                return new Promise((resolve, reject) => {
+                    if (window.db) {
+                        resolve(window.db);
+                        return;
+                    }
+                    
+                    const dbName = 'fashionAIDB';
+                    const dbVersion = 1;
+                    const request = indexedDB.open(dbName, dbVersion);
+                    
+                    request.onerror = function(event) {
+                        console.error("数据库错误: ", event.target.error);
+                        reject("无法打开数据库");
+                    };
+                    
+                    request.onsuccess = function(event) {
+                        window.db = event.target.result;
+                        console.log("数据库连接成功");
+                        resolve(window.db);
+                    };
+                    
+                    request.onupgradeneeded = function(event) {
+                        const db = event.target.result;
+                        
+                        // 创建图片分析历史存储
+                        if (!db.objectStoreNames.contains('imageAnalysisHistory')) {
+                            const store = db.createObjectStore('imageAnalysisHistory', { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('timestamp', 'timestamp', { unique: false });
+                            console.log("创建imageAnalysisHistory存储");
+                        }
+                        
+                        // 检查并创建其他需要的存储
+                        if (!db.objectStoreNames.contains('favorites')) {
+                            const store = db.createObjectStore('favorites', { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('type', 'type', { unique: false });
+                            store.createIndex('timestamp', 'timestamp', { unique: false });
+                            console.log("创建favorites存储");
+                        }
+                        
+                        if (!db.objectStoreNames.contains('userPreferences')) {
+                            const store = db.createObjectStore('userPreferences', { keyPath: 'id' });
+                            console.log("创建userPreferences存储");
+                        }
+                    };
+                });
+            }
+            
+            // 初始化数据库
+            initImageDB().then(() => {
+                console.log("图片上传页面数据库初始化完成");
+                
+                // 加载用户之前选择的示例图片
+                getUserPreference('lastSelectedExample').then(exampleId => {
+                    if (exampleId) {
+                        const exampleOption = document.querySelector(`.example-item[data-id="${exampleId}"]`);
+                        if (exampleOption) {
+                            // 模拟点击该示例图片
+                            setTimeout(() => exampleOption.click(), 500);
+                        }
+                    }
+                }).catch(err => {
+                    console.error("获取用户偏好失败: ", err);
+                });
+            }).catch(err => {
+                console.error("初始化数据库失败: ", err);
             });
-        });
-        
-        nextBtn.addEventListener('click', function() {
-            similarSlider.scrollBy({
-                left: 300,
-                behavior: 'smooth'
-            });
+            
+            // 获取用户偏好
+            function getUserPreference(key) {
+                return new Promise((resolve, reject) => {
+                    if (!window.db) {
+                        initImageDB().then(db => {
+                            _getUserPreference(key).then(resolve).catch(reject);
+                        }).catch(reject);
+                        return;
+                    }
+                    
+                    _getUserPreference(key).then(resolve).catch(reject);
+                });
+            }
+            
+            function _getUserPreference(key) {
+                return new Promise((resolve, reject) => {
+                    const transaction = window.db.transaction(['userPreferences'], 'readonly');
+                    const store = transaction.objectStore('userPreferences');
+                    const request = store.get(key);
+                    
+                    request.onsuccess = function(event) {
+                        if (event.target.result) {
+                            resolve(event.target.result.value);
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    
+                    request.onerror = function(event) {
+                        reject(event.target.error);
+                    };
+                });
+            }
+            
+            // 根据URL参数加载示例
+            function loadFromUrlParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const exampleId = urlParams.get('example');
+                
+                if (exampleId) {
+                    const exampleOption = document.querySelector(`.example-item[data-id="${exampleId}"]`);
+                    if (exampleOption) {
+                        setTimeout(() => {
+                            exampleOption.click();
+                            // 自动分析
+                            setTimeout(() => analyzeBtn.click(), 500);
+                        }, 500);
+                    }
+                }
+            }
+            
+            // 加载URL参数
+            loadFromUrlParams();
         });
     </script>
 </body>
